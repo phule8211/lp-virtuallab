@@ -1179,14 +1179,14 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 17. TỪ TRƯỜNG & LỰC LORENTZ (Magnetic Field & Lorentz Force)
+// 17. TỪ TRƯỜNG & LỰC LORENTZ (Magnetic Field & Lorentz Force PhET)
 // ─────────────────────────────────────────────────────────────
 (function initLorentzForce() {
     const canvas = document.getElementById('lorentzCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let particle = { x: 80, y: 220, vx: 5, vy: 0, q: 1.0, m: 1.0 };
+    let particle = { x: 140, y: 230, vx: 5, vy: 0, q: 1.0, m: 1.0 };
     let trail = [];
     let running = true;
 
@@ -1196,9 +1196,9 @@
         const qEl = document.getElementById('lorentz-q');
 
         return {
-            B: bEl ? parseFloat(bEl.value) : 1.2, // Tesla (hướng ra ngoài hoặc vào trong)
-            v0: vEl ? parseFloat(vEl.value) : 25, // m/s
-            q: qEl ? parseFloat(qEl.value) : 1.0  // C (+ hoặc -)
+            B: bEl ? parseFloat(bEl.value) : 1.2,
+            v0: vEl ? parseFloat(vEl.value) : 25,
+            q: qEl ? parseFloat(qEl.value) : 1.0
         };
     }
 
@@ -1212,7 +1212,6 @@
         if (vVal) vVal.textContent = p.v0.toFixed(0) + ' m/s';
         if (qVal) qVal.textContent = (p.q > 0 ? '+' : '') + p.q.toFixed(1) + ' C';
 
-        // Bán kính cyclotron: R = m * v / (|q| * B)
         const R = (1.0 * p.v0) / (Math.abs(p.q) * Math.abs(p.B));
         const T = (2 * Math.PI * 1.0) / (Math.abs(p.q) * Math.abs(p.B));
 
@@ -1224,9 +1223,9 @@
 
     function resetSimulation() {
         const p = getParams();
-        particle.x = 100;
-        particle.y = 220;
-        particle.vx = p.v0 * 2.5;
+        particle.x = 160;
+        particle.y = 230;
+        particle.vx = p.v0 * 2.6;
         particle.vy = 0;
         particle.q = p.q;
         trail = [];
@@ -1237,10 +1236,6 @@
         if (!running) return;
         const p = getParams();
 
-        // Lực Lorentz: F = q * (v x B)
-        // Khi B vuông góc màn hình hướng vào trong (chiều z):
-        // Fx = q * vy * B
-        // Fy = -q * vx * B
         const B = p.B;
         const q = particle.q;
 
@@ -1254,94 +1249,123 @@
         particle.y += particle.vy * dt;
 
         trail.push({ x: particle.x, y: particle.y });
-        if (trail.length > 250) trail.shift();
+        if (trail.length > 280) trail.shift();
 
-        // Ra khỏi màn hình
-        if (particle.x < 10 || particle.x > canvas.width - 10 || particle.y < 10 || particle.y > canvas.height - 10) {
+        if (particle.x < 50 || particle.x > 650 || particle.y < 50 || particle.y > 410) {
             resetSimulation();
         }
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'LỰC LORENTZ & CHUYỂN ĐỘNG TRONG TỪ TRƯỜNG');
+
         const p = getParams();
 
-        // 1. Ký hiệu từ trường B đều hướng vào mặt phẳng (các dấu cộng ⨂)
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
-        ctx.lineWidth = 1.2;
-        for (let x = 40; x < canvas.width; x += 45) {
-            for (let y = 40; y < canvas.height; y += 45) {
+        // 1. Bình ống tia điện tử chân không (Vacuum Chamber)
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+        ctx.beginPath();
+        ctx.roundRect(100, 40, 560, 380, 20);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Lưới từ trường B đều hướng vào mặt phẳng ⨂
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.22)';
+        ctx.lineWidth = 1.4;
+        for (let x = 130; x <= 630; x += 45) {
+            for (let y = 70; y <= 390; y += 45) {
                 ctx.beginPath();
-                ctx.arc(x, y, 7, 0, Math.PI * 2);
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
                 ctx.stroke();
+
                 ctx.beginPath();
-                ctx.moveTo(x - 4, y - 4);
-                ctx.lineTo(x + 4, y + 4);
-                ctx.moveTo(x + 4, y - 4);
-                ctx.lineTo(x - 4, y + 4);
+                ctx.moveTo(x - 4, y - 4); ctx.lineTo(x + 4, y + 4);
+                ctx.moveTo(x + 4, y - 4); ctx.lineTo(x - 4, y + 4);
                 ctx.stroke();
             }
         }
 
-        // 2. Vệt quỹ đạo tròn
+        // Nhãn từ trường B
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+        ctx.fillText(`Từ trường đều B = ${p.B.toFixed(1)} T (hướng vào trong ⨂)`, 120, 62);
+
+        // 2. Súng phóng hạt điện tích bên trái
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.roundRect(40, 205, 90, 50, 4);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 10px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('SÚNG PHÓNG', 85, 230);
+        ctx.fillText(`v₀ = ${p.v0} m/s`, 85, 245);
+
+        ctx.fillStyle = '#eab308';
+        ctx.fillRect(130, 222, 15, 16);
+
+        // 3. Vệt quỹ đạo chuyển động phát sáng dạ quang
         if (trail.length > 1) {
             ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 3.5;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 10;
             ctx.beginPath();
             trail.forEach((pt, i) => {
                 if (i === 0) ctx.moveTo(pt.x, pt.y);
                 else ctx.lineTo(pt.x, pt.y);
             });
             ctx.stroke();
+            ctx.shadowBlur = 0;
         }
 
-        // 3. Hạt mang điện
-        ctx.fillStyle = particle.q > 0 ? '#ef4444' : '#3b82f6';
+        // 4. Hạt mang điện phát sáng rực rỡ
+        const isPos = particle.q > 0;
+        const col = isPos ? '#ef4444' : '#38bdf8';
+        ctx.fillStyle = col;
+        ctx.shadowColor = col;
+        ctx.shadowBlur = 12;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, 10, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, 11, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
         ctx.stroke();
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px "Space Grotesk", -apple-system, sans-serif';
+        ctx.font = 'bold 14px "Space Grotesk", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(particle.q > 0 ? '+' : '−', particle.x, particle.y + 4);
+        ctx.fillText(isPos ? '+' : '−', particle.x, particle.y + 4.5);
 
-        // Vector vận tốc v (màu xanh lá)
-        drawArrow(ctx, particle.x, particle.y, particle.x + particle.vx * 0.4, particle.y + particle.vy * 0.4, '#22c55e', 'v');
+        // Vector vận tốc tiếp tuyến v (xanh lá)
+        PhET.drawVector(ctx, particle.x, particle.y, particle.vx * 0.45, particle.vy * 0.45, '#22c55e', 'v', 2.8);
 
-        // Vector lực Lorentz F (màu đỏ vuông góc với v)
-        const fx = (particle.q * particle.vy * p.B) * 0.5;
-        const fy = (-particle.q * particle.vx * p.B) * 0.5;
-        drawArrow(ctx, particle.x, particle.y, particle.x + fx, particle.y + fy, '#ef4444', 'F_L');
-    }
+        // Vector lực Lorentz hướng tâm F_L (đỏ)
+        const fx = (particle.q * particle.vy * p.B) * 0.55;
+        const fy = (-particle.q * particle.vx * p.B) * 0.55;
+        PhET.drawVector(ctx, particle.x, particle.y, fx, fy, '#f97316', 'F_L', 2.8);
 
-    function drawArrow(ctx, fromX, fromY, toX, toY, color, label) {
-        const headlen = 6;
-        const angle = Math.atan2(toY - fromY, toX - fromX);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.stroke();
+        // HUD thông số quỹ đạo
+        const R = (1.0 * p.v0) / (Math.abs(p.q) * Math.abs(p.B));
+        const T = (2 * Math.PI * 1.0) / (Math.abs(p.q) * Math.abs(p.B));
+        PhET.drawHUD(ctx, 470, 290, '📊 CHUYỂN ĐỘNG TRÒN CYCLOTRON', [
+            { label: 'Bán kính R', val: `${R.toFixed(2)} m`, color: '#38bdf8' },
+            { label: 'Chu kỳ quay T', val: `${T.toFixed(2)} s`, color: '#facc15' },
+            { label: 'Tần số cyclotron f', val: `${(1 / T).toFixed(2)} Hz`, color: '#4ade80' }
+        ], 210);
 
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.fill();
-
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(label, toX + 6, toY + 4);
+        ctx.restore();
     }
 
     let lastTime = performance.now();
@@ -1364,14 +1388,14 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 18. CẢM ỨNG ĐIỆN TỪ (Faraday & Lenz Induction)
+// 18. CẢM ỨNG ĐIỆN TỪ (Faraday & Lenz Induction PhET)
 // ─────────────────────────────────────────────────────────────
 (function initFaradayInduction() {
     const canvas = document.getElementById('faradayCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let magnetX = 140;
+    let magnetX = 160;
     let magnetVx = 0;
     let draggingMagnet = false;
     let inducedEMF = 0;
@@ -1379,7 +1403,7 @@
     function getParams() {
         const turnsEl = document.getElementById('faraday-turns');
         return {
-            N: turnsEl ? parseInt(turnsEl.value) : 10 // Số vòng dây
+            N: turnsEl ? parseInt(turnsEl.value) : 10
         };
     }
 
@@ -1394,8 +1418,8 @@
 
     canvas.addEventListener('mousedown', (e) => {
         const rect = canvas.getBoundingClientRect();
-        const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
-        if (Math.abs(mx - magnetX) < 60) {
+        const mx = (e.clientX - rect.left) * (canvas.width / rect.width) * (700 / canvas.width);
+        if (Math.abs(mx - magnetX) < 70) {
             draggingMagnet = true;
         }
     });
@@ -1403,10 +1427,10 @@
     window.addEventListener('mousemove', (e) => {
         if (!draggingMagnet) return;
         const rect = canvas.getBoundingClientRect();
-        const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const mx = (e.clientX - rect.left) * (canvas.width / rect.width) * (700 / canvas.width);
         const oldX = magnetX;
-        magnetX = Math.max(80, Math.min(canvas.width - 120, mx));
-        magnetVx = (magnetX - oldX) * 60; // Vận tốc di chuyển thanh nam châm
+        magnetX = Math.max(90, Math.min(610, mx));
+        magnetVx = (magnetX - oldX) * 60;
     });
 
     window.addEventListener('mouseup', () => {
@@ -1416,15 +1440,14 @@
 
     function update() {
         const p = getParams();
-        const coilCenterX = 440;
+        const coilCenterX = 450;
         const dist = Math.abs(magnetX - coilCenterX);
 
-        // Suất điện động cảm ứng tỷ lệ với dPhi/dt: e_c = -N * (dPhi/dx) * v
-        if (dist < 180 && Math.abs(magnetVx) > 1) {
+        if (dist < 200 && Math.abs(magnetVx) > 1) {
             const grad = (magnetX - coilCenterX) / Math.pow(dist * 0.1 + 10, 2);
-            inducedEMF = -p.N * 0.05 * grad * (magnetVx / 50);
+            inducedEMF = -p.N * 0.06 * grad * (magnetVx / 45);
         } else {
-            inducedEMF *= 0.9; // Giảm dần về 0 khi nam châm đứng yên
+            inducedEMF *= 0.88;
         }
 
         syncLabels();
@@ -1432,80 +1455,140 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'CẢM ỨNG ĐIỆN TỪ FARADAY & ĐỊNH LUẬT LENZ');
+
         const p = getParams();
+        const coilCenterX = 450;
+        const coilY = 240;
 
-        const coilCenterX = 440;
-        const coilY = 210;
-
-        // 1. Cuộn dây Solenoid N vòng
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 4;
-        const coilW = 120;
-        const step = coilW / p.N;
-
-        for (let i = 0; i < p.N; i++) {
-            const cx = (coilCenterX - coilW / 2) + i * step;
+        // 1. Đường sức từ trường của nam châm
+        ctx.save();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.18)';
+        ctx.lineWidth = 1.5;
+        for (let rad = 35; rad <= 120; rad += 25) {
             ctx.beginPath();
-            ctx.ellipse(cx, coilY, 12, 45, 0, 0, Math.PI * 2);
+            ctx.ellipse(magnetX, coilY, rad * 1.5, rad, 0, 0, Math.PI * 2);
             ctx.stroke();
         }
+        ctx.restore();
 
-        // Lõi sắt từ cuộn dây
-        ctx.fillStyle = 'rgba(148, 163, 184, 0.3)';
-        ctx.fillRect(coilCenterX - coilW / 2 - 10, coilY - 12, coilW + 20, 24);
-
-        // 2. Thanh nam châm thẳng N-S di động
-        const magW = 100;
-        const magH = 36;
+        // 2. Thanh nam châm thẳng N-S siêu thực
+        const magW = 120;
+        const magH = 42;
         const magY = coilY - magH / 2;
 
-        // Cực Bắc (N - Đỏ)
-        ctx.fillStyle = '#ef4444';
-        ctx.fillRect(magnetX, magY, magW / 2, magH);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 14px "Space Grotesk", -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('N', magnetX + magW / 4, magY + 23);
-
-        // Cực Nam (S - Xanh)
-        ctx.fillStyle = '#3b82f6';
-        ctx.fillRect(magnetX - magW / 2, magY, magW / 2, magH);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText('S', magnetX - magW / 4, magY + 23);
-
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(magnetX - magW / 2, magY, magW, magH);
-
-        // 3. Điện kế nhạy Galvanometer đo dòng cảm ứng
-        drawGalvanometer(ctx, 440, 80, inducedEMF);
-    }
-
-    function drawGalvanometer(ctx, x, y, val) {
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(x - 50, y - 30, 100, 60);
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x - 50, y - 30, 100, 60);
-
-        // Kim chỉ độ lệch
-        const needleAngle = Math.max(-0.8, Math.min(0.8, val * 0.4));
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 2.5;
+        // Cực Bắc N (Đỏ rực)
+        const nGrad = ctx.createLinearGradient(magnetX, 0, magnetX + magW / 2, 0);
+        nGrad.addColorStop(0, '#ef4444');
+        nGrad.addColorStop(0.5, '#f87171');
+        nGrad.addColorStop(1, '#b91c1c');
+        ctx.fillStyle = nGrad;
         ctx.beginPath();
-        ctx.moveTo(x, y + 20);
-        ctx.lineTo(x + Math.sin(needleAngle) * 35, y + 20 - Math.cos(needleAngle) * 35);
+        ctx.roundRect(magnetX, magY, magW / 2, magH, [0, 4, 4, 0]);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = '10px "Space Grotesk", -apple-system, sans-serif';
+        ctx.font = 'bold 16px "Space Grotesk", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('Điện kế G (Lenz)', x, y - 12);
+        ctx.fillText('N', magnetX + magW / 4, magY + 27);
+
+        // Cực Nam S (Xanh lam bóng)
+        const sGrad = ctx.createLinearGradient(magnetX - magW / 2, 0, magnetX, 0);
+        sGrad.addColorStop(0, '#1d4ed8');
+        sGrad.addColorStop(0.5, '#60a5fa');
+        sGrad.addColorStop(1, '#2563eb');
+        ctx.fillStyle = sGrad;
+        ctx.beginPath();
+        ctx.roundRect(magnetX - magW / 2, magY, magW / 2, magH, [4, 0, 0, 4]);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('S', magnetX - magW / 4, magY + 27);
+
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.fillText('◄ KÉO RÊ NAM CHÂM VÀO/RA CUỘN DÂY ►', magnetX, magY - 14);
+
+        // 3. Cuộn dây Solenoid 3D đồng
+        const coilW = 140;
+        const step = coilW / p.N;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.fillRect(coilCenterX - coilW / 2 - 10, coilY - 35, coilW + 20, 70);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(coilCenterX - coilW / 2 - 10, coilY - 35, coilW + 20, 70);
+
+        for (let i = 0; i < p.N; i++) {
+            const cx = (coilCenterX - coilW / 2) + i * step + step / 2;
+            const copGrad = ctx.createLinearGradient(cx - 6, 0, cx + 6, 0);
+            copGrad.addColorStop(0, '#b45309');
+            copGrad.addColorStop(0.4, '#fef08a');
+            copGrad.addColorStop(0.8, '#d97706');
+            copGrad.addColorStop(1, '#78350f');
+
+            ctx.strokeStyle = copGrad;
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.ellipse(cx, coilY, 9, 44, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // 4. Bóng đèn sợi đốt phát sáng khi có dòng cảm ứng
+        const bulbX = coilCenterX - 45;
+        const bulbY = 85;
+        const glowIntensity = Math.min(1.0, Math.abs(inducedEMF) * 1.5);
+
+        if (glowIntensity > 0.05) {
+            const bulbGlow = ctx.createRadialGradient(bulbX, bulbY, 5, bulbX, bulbY, 55 * glowIntensity);
+            bulbGlow.addColorStop(0, 'rgba(254, 240, 138, 0.9)');
+            bulbGlow.addColorStop(0.4, 'rgba(245, 158, 11, 0.4)');
+            bulbGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+            ctx.fillStyle = bulbGlow;
+            ctx.beginPath();
+            ctx.arc(bulbX, bulbY, 55 * glowIntensity, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.fillStyle = glowIntensity > 0.05 ? 'rgba(254, 240, 138, 0.85)' : 'rgba(241, 245, 249, 0.25)';
+        ctx.beginPath();
+        ctx.arc(bulbX, bulbY, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#64748b';
+        ctx.fillRect(bulbX - 8, bulbY + 18, 16, 10);
+
+        // 5. Điện kế nhạy Galvanometer kim 0 ở giữa
+        PhET.drawAnalogGauge(ctx, coilCenterX + 65, 85, 38, inducedEMF, -2.5, 2.5, 'V', 'ĐIỆN KẾ G');
+
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(coilCenterX - coilW / 2, coilY + 40);
+        ctx.lineTo(coilCenterX - coilW / 2, 140);
+        ctx.lineTo(bulbX, 140);
+        ctx.lineTo(bulbX, bulbY + 28);
+
+        ctx.moveTo(coilCenterX + coilW / 2, coilY + 40);
+        ctx.lineTo(coilCenterX + coilW / 2, 140);
+        ctx.lineTo(coilCenterX + 65, 140);
+        ctx.lineTo(coilCenterX + 65, 125);
+        ctx.stroke();
+
+        ctx.restore();
     }
 
     function loop() {
@@ -1522,7 +1605,7 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 19. MẠCH ĐIỆN XOAY CHIỀU A.C. RLC (AC Resonance & Phasor)
+// 19. MẠCH ĐIỆN XOAY CHIỀU A.C. RLC (AC Resonance & Phasor PhET)
 // ─────────────────────────────────────────────────────────────
 (function initRLCAC() {
     const canvas = document.getElementById('rlcCanvas');
@@ -1538,10 +1621,10 @@
         const fEl = document.getElementById('rlc-freq');
 
         return {
-            R: rEl ? parseFloat(rEl.value) : 40,   // Ohm
-            L: lEl ? parseFloat(lEl.value) : 0.2,  // Henry
-            C: cEl ? parseFloat(cEl.value) : 100,  // microFarad
-            f: fEl ? parseFloat(fEl.value) : 50    // Hz
+            R: rEl ? parseFloat(rEl.value) : 40,
+            L: lEl ? parseFloat(lEl.value) : 0.2,
+            C: cEl ? parseFloat(cEl.value) : 100,
+            f: fEl ? parseFloat(fEl.value) : 50
         };
     }
 
@@ -1557,14 +1640,12 @@
         if (cVal) cVal.textContent = p.C.toFixed(0) + ' μF';
         if (fVal) fVal.textContent = p.f.toFixed(1) + ' Hz';
 
-        // Tính ZL, ZC, Z, phi
         const omega = 2 * Math.PI * p.f;
         const ZL = omega * p.L;
         const ZC = 1 / (omega * p.C * 1e-6);
         const Z = Math.sqrt(p.R * p.R + Math.pow(ZL - ZC, 2));
         const phi = Math.atan2(ZL - ZC, p.R);
 
-        // Tần số cộng hưởng điện: f0 = 1 / (2*pi*sqrt(LC))
         const f0 = 1 / (2 * Math.PI * Math.sqrt(p.L * p.C * 1e-6));
 
         const zlEl = document.getElementById('rlc-zl');
@@ -1582,124 +1663,139 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const p = getParams();
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
 
+        PhET.drawLabBackground(ctx, 700, 460, 'MẠCH ĐIỆN XOAY CHIỀU R-L-C & GIẢN ĐỒ FRESNEL');
+
+        const p = getParams();
         const omega = 2 * Math.PI * p.f;
         const ZL = omega * p.L;
         const ZC = 1 / (omega * p.C * 1e-6);
         const Z = Math.sqrt(p.R * p.R + Math.pow(ZL - ZC, 2));
         const phi = Math.atan2(ZL - ZC, p.R);
 
-        const U0 = 100; // Volt
-        const I0 = (U0 / Z) * 20; // Scale hiển thị
+        const U0 = 100;
+        const I0 = (U0 / Z) * 22;
 
-        // 1. Đồ thị sóng dao động u(t) và i(t) bên trái
-        drawWaveforms(ctx, 30, 30, 360, 340, omega, phi, U0, I0);
+        drawOscilloscope(ctx, 25, 45, 360, 360, omega, phi, U0, I0);
+        drawFresnelDiagram(ctx, 405, 45, 270, 360, p.R, ZL, ZC, phi);
 
-        // 2. Giản đồ vector Fresnel quay bên phải
-        drawFresnelDiagram(ctx, 430, 30, canvas.width - 460, 340, p.R, ZL, ZC, phi);
+        ctx.restore();
     }
 
-    function drawWaveforms(ctx, ox, oy, w, h, omega, phi, U0, I0) {
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(ox, oy, w, h);
-        ctx.strokeStyle = '#334155';
-        ctx.strokeRect(ox, oy, w, h);
-
-        const midY = oy + h / 2;
+    function drawOscilloscope(ctx, ox, oy, w, h, omega, phi, U0, I0) {
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.roundRect(ox, oy, w, h, 8);
+        ctx.fill();
         ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        const screenMargin = 16;
+        const sx = ox + screenMargin;
+        const sy = oy + screenMargin + 10;
+        const sw = w - screenMargin * 2;
+        const sh = h - screenMargin * 2 - 20;
+
+        ctx.fillStyle = '#022c22';
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
         ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(ox, midY);
-        ctx.lineTo(ox + w, midY);
-        ctx.stroke();
 
-        // Sóng điện áp u(t) = U0 * cos(omega*t) - Màu đỏ
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 2.5;
+        const gridStep = 32;
+        for (let gx = sx; gx <= sx + sw; gx += gridStep) {
+            ctx.beginPath(); ctx.moveTo(gx, sy); ctx.lineTo(gx, sy + sh); ctx.stroke();
+        }
+        for (let gy = sy; gy <= sy + sh; gy += gridStep) {
+            ctx.beginPath(); ctx.moveTo(sx, gy); ctx.lineTo(sx + sw, gy); ctx.stroke();
+        }
+
+        const midY = sy + sh / 2;
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(sx, midY); ctx.lineTo(sx + sw, midY); ctx.stroke();
+
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 2.6;
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 8;
         ctx.beginPath();
-        for (let x = 0; x < w; x += 2) {
-            const timeX = t + x * 0.0005;
-            const y = midY - Math.cos(omega * timeX) * 70;
-            if (x === 0) ctx.moveTo(ox + x, y);
-            else ctx.lineTo(ox + x, y);
+        for (let x = 0; x < sw; x += 2) {
+            const timeX = t + x * 0.0006;
+            const y = midY - Math.cos(omega * timeX) * 65;
+            if (x === 0) ctx.moveTo(sx + x, y);
+            else ctx.lineTo(sx + x, y);
         }
         ctx.stroke();
+        ctx.shadowBlur = 0;
 
-        // Sóng dòng điện i(t) = I0 * cos(omega*t - phi) - Màu xanh
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2.6;
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 8;
         ctx.beginPath();
-        for (let x = 0; x < w; x += 2) {
-            const timeX = t + x * 0.0005;
-            const y = midY - Math.cos(omega * timeX - phi) * Math.min(85, I0 * 3);
-            if (x === 0) ctx.moveTo(ox + x, y);
-            else ctx.lineTo(ox + x, y);
+        for (let x = 0; x < sw; x += 2) {
+            const timeX = t + x * 0.0006;
+            const y = midY - Math.cos(omega * timeX - phi) * Math.min(80, I0 * 3.2);
+            if (x === 0) ctx.moveTo(sx + x, y);
+            else ctx.lineTo(sx + x, y);
         }
         ctx.stroke();
+        ctx.shadowBlur = 0;
 
-        ctx.fillStyle = '#ef4444';
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText('— Điện áp u(t)', ox + 20, oy + 25);
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('— Kênh 1: u(t)', sx + 10, sy + 18);
         ctx.fillStyle = '#38bdf8';
-        ctx.fillText('— Dòng điện i(t)', ox + 140, oy + 25);
+        ctx.fillText('— Kênh 2: i(t)', sx + 120, sy + 18);
     }
 
     function drawFresnelDiagram(ctx, ox, oy, w, h, R, ZL, ZC, phi) {
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(ox, oy, w, h);
-        ctx.strokeStyle = '#475569';
-        ctx.strokeRect(ox, oy, w, h);
-
-        const cx = ox + 60;
-        const cy = oy + h / 2;
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText('Giản Đồ Vector Fresnel', ox + 20, oy + 25);
-
-        // Vector UR nằm ngang (theo trục I)
-        const scale = 1.2;
-        drawVector(ctx, cx, cy, R * scale, 0, '#10b981', 'U_R');
-
-        // Vector UL hướng thẳng đứng lên trên (+y)
-        drawVector(ctx, cx, cy, 0, -ZL * scale * 0.6, '#ef4444', 'U_L');
-
-        // Vector UC hướng thẳng đứng xuống dưới (-y)
-        drawVector(ctx, cx, cy, 0, ZC * scale * 0.6, '#38bdf8', 'U_C');
-
-        // Vector U tổng hợp
-        const netY = (ZC - ZL) * scale * 0.6;
-        drawVector(ctx, cx, cy, R * scale, netY, '#f59e0b', 'U');
-    }
-
-    function drawVector(ctx, fromX, fromY, dx, dy, color, label) {
-        const toX = fromX + dx;
-        const toY = fromY + dy;
-        const headlen = 7;
-        const angle = Math.atan2(dy, dx);
-
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
         ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
+        ctx.roundRect(ox, oy, w, h, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.fill();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('GIẢN ĐỒ VECTOR FRESNEL', ox + w / 2, oy + 24);
 
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(label, toX + 6, toY + 4);
+        const cx = ox + 70;
+        const cy = oy + h / 2;
+        const scale = 1.3;
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(cx - 40, cy); ctx.lineTo(cx + 170, cy);
+        ctx.moveTo(cx, cy - 130); ctx.lineTo(cx, cy + 130);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        PhET.drawVector(ctx, cx, cy, R * scale, 0, '#4ade80', 'U_R', 2.8);
+        PhET.drawVector(ctx, cx, cy, 0, -ZL * scale * 0.65, '#ef4444', 'U_L', 2.8);
+        PhET.drawVector(ctx, cx, cy, 0, ZC * scale * 0.65, '#38bdf8', 'U_C', 2.8);
+
+        const netY = (ZC - ZL) * scale * 0.65;
+        PhET.drawVector(ctx, cx, cy, R * scale, netY, '#facc15', 'U_toàn mạch', 3.2);
+
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 35, 0, Math.atan2(netY, R * scale));
+        ctx.stroke();
+
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.fillText(`φ = ${(phi * 180 / Math.PI).toFixed(1)}°`, cx + 45, cy + netY / 2);
     }
 
     let lastTime = performance.now();
@@ -1719,4 +1815,3 @@
 
     syncLabels();
 })();
-

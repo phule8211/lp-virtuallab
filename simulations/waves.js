@@ -1,6 +1,6 @@
 /* ============================================================
    🌊 LP.VirtualLab - CHUYÊN ĐỀ 3: DAO ĐỘNG & SÓNG CƠ (Oscillations & Waves)
-   Bao gồm 3 bài mô phỏng chuẩn mực:
+   Bao gồm 3 bài mô phỏng chuẩn mực PhET siêu trực quan:
    11. Dao động điều hòa: Con lắc lò xo & Con lắc đơn (Harmonic Oscillators)
    12. Dao động tắt dần và Hiện tượng Cộng hưởng (Damped & Forced Resonance)
    13. Sóng cơ học, Giao thoa sóng & Sóng dừng trên dây (Mechanical Waves & Standing Waves)
@@ -8,7 +8,7 @@
    ============================================================ */
 
 // ─────────────────────────────────────────────────────────────
-// 11. DAO ĐỘNG ĐIỀU HÒA (Harmonic Motion: Spring & Pendulum)
+// 11. DAO ĐỘNG ĐIỀU HÒA (Harmonic Motion: Spring & Pendulum PhET)
 // ─────────────────────────────────────────────────────────────
 (function initHarmonicMotion() {
     const canvas = document.getElementById('harmonicCanvas');
@@ -50,7 +50,6 @@
         if (gVal) gVal.textContent = p.g.toFixed(1) + ' m/s²';
         if (aVal) aVal.textContent = p.A.toFixed(2) + ' m';
 
-        // Chu kỳ T và tần số f
         let omega = 0, T = 0, f = 0;
         if (mode === 'spring') {
             omega = Math.sqrt(p.k / p.m);
@@ -73,12 +72,7 @@
         if (paused) return;
         const p = getParams();
 
-        let omega = 0;
-        if (mode === 'spring') {
-            omega = Math.sqrt(p.k / p.m);
-        } else {
-            omega = Math.sqrt(p.g / p.L);
-        }
+        let omega = mode === 'spring' ? Math.sqrt(p.k / p.m) : Math.sqrt(p.g / p.L);
 
         t += dt;
         const x = p.A * Math.cos(omega * t);
@@ -86,7 +80,7 @@
         const a = -omega * omega * x;
 
         waveHistory.push(x);
-        if (waveHistory.length > 200) waveHistory.shift();
+        if (waveHistory.length > 180) waveHistory.shift();
 
         const xEl = document.getElementById('hm-disp');
         const vEl = document.getElementById('hm-vel');
@@ -99,136 +93,258 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'DAO ĐỘNG ĐIỀU HÒA (CON LẮC LÒ XO & ĐƠN)');
+
         const p = getParams();
-
-        // 1. Phía bên trái: Mô phỏng vật lý (Lò xo hoặc Con lắc đơn)
-        const simW = 280;
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(15, 20, simW, canvas.height - 40);
-        ctx.strokeStyle = '#334155';
-        ctx.strokeRect(15, 20, simW, canvas.height - 40);
-
         let omega = mode === 'spring' ? Math.sqrt(p.k / p.m) : Math.sqrt(p.g / p.L);
         const x = p.A * Math.cos(omega * t);
+        const v = -p.A * omega * Math.sin(omega * t);
+
+        // Năng lượng: Động năng Ek, Thế năng Ep, Toàn phần Etot
+        let Ek = 0, Ep = 0, Etot = 0;
+        if (mode === 'spring') {
+            Ek = 0.5 * p.m * v * v;
+            Ep = 0.5 * p.k * x * x;
+        } else {
+            Ek = 0.5 * p.m * (p.L * v) * (p.L * v);
+            // h = L * (1 - cos theta) approx L * 0.5 * theta^2
+            const theta = (x / p.L);
+            Ep = p.m * p.g * p.L * (1 - Math.cos(theta));
+        }
+        Etot = Ek + Ep;
+
+        // 1. Bên trái: Cơ hệ dao động cơ học (Lò xo hoặc Con lắc đơn)
+        const simW = 320;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+        ctx.beginPath();
+        ctx.roundRect(20, 40, simW, 375, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Thước đo vạch chia bên cạnh
+        PhET.drawRuler(ctx, 40, 60, 290, true, 'cm', 'cm');
 
         if (mode === 'spring') {
-            // Con lắc lò xo thẳng đứng
-            const topX = 155;
-            const topY = 40;
-            const restLen = 140;
-            const currentLen = restLen + x * 100;
+            // CON LẮC LÒ XO TREO THẲNG ĐỨNG
+            const mountX = 185;
+            const mountY = 55;
+            const restLen = 130;
+            const currentLen = restLen + (x / p.A) * 65;
 
-            // Giá treo
+            // Giá treo kim loại đúc nặng
             ctx.fillStyle = '#475569';
-            ctx.fillRect(topX - 40, topY - 10, 80, 10);
-
-            // Các vòng xoắn lò xo
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.moveTo(topX, topY);
-            const coils = 12;
-            const dy = currentLen / coils;
-            for (let i = 1; i <= coils; i++) {
-                const cx = topX + (i % 2 === 0 ? 15 : -15);
-                const cy = topY + (i - 0.5) * dy;
-                ctx.lineTo(cx, cy);
-            }
-            ctx.lineTo(topX, topY + currentLen);
+            ctx.roundRect(mountX - 45, mountY - 12, 90, 12, 3);
+            ctx.fill();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
             ctx.stroke();
 
-            // Quả nặng lò xo
-            const bSize = 30 + p.m * 3;
-            ctx.fillStyle = '#0284c7';
-            ctx.fillRect(topX - bSize / 2, topY + currentLen, bSize, bSize);
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(topX - bSize / 2, topY + currentLen, bSize, bSize);
+            // Móc treo xoay
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(mountX, mountY + 3, 5, 0, Math.PI);
+            ctx.stroke();
 
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 12px "Space Grotesk", -apple-system, sans-serif';
+            // Lò xo xoắn ốc 3D PhET
+            PhET.drawCoiledSpring(ctx, mountX, mountY + 8, mountX, mountY + 8 + currentLen, 14, 18, '#38bdf8');
+
+            // Quả nặng treo kim loại bằng đồng hoặc thép bóng
+            const massY = mountY + 8 + currentLen;
+            const bW = 46 + p.m * 4;
+            const bH = 34 + p.m * 3;
+
+            // Móc quả nặng
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(mountX, massY - 3, 5, Math.PI, Math.PI * 2);
+            ctx.stroke();
+
+            // Khối kim loại 3D bo góc
+            const massGrad = ctx.createLinearGradient(mountX - bW / 2, 0, mountX + bW / 2, 0);
+            massGrad.addColorStop(0, '#0369a1');
+            massGrad.addColorStop(0.3, '#38bdf8');
+            massGrad.addColorStop(0.7, '#e0f2fe');
+            massGrad.addColorStop(1, '#075985');
+            ctx.fillStyle = massGrad;
+            ctx.beginPath();
+            ctx.roundRect(mountX - bW / 2, massY, bW, bH, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Nhãn khối lượng in sắc nét trên quả nặng
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 12px "Space Grotesk", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(`${p.m}kg`, topX, topY + currentLen + bSize / 2 + 4);
+            ctx.fillText(`${p.m.toFixed(1)} kg`, mountX, massY + bH / 2 + 4);
+
+            // Đường vị trí cân bằng (VTCB)
+            const vtcbY = mountY + 8 + restLen + bH / 2;
+            ctx.strokeStyle = '#ef4444';
+            ctx.setLineDash([5, 4]);
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(85, vtcbY);
+            ctx.lineTo(285, vtcbY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 10px "Space Grotesk", sans-serif';
+            ctx.fillText('VTCB (x = 0)', 240, vtcbY - 4);
+
+            // Vector vận tốc v (xanh lá) và lực kéo về F (cam)
+            PhET.drawVector(ctx, mountX + bW / 2 + 10, massY + bH / 2, 0, -v * 15, '#22c55e', 'v');
+            PhET.drawVector(ctx, mountX - bW / 2 - 10, massY + bH / 2, 0, -x * 80, '#f97316', 'F_kv');
 
         } else {
-            // Con lắc đơn
-            const pivotX = 155;
-            const pivotY = 50;
-            const lenPx = 80 + p.L * 70;
-            const theta = (p.A / p.L) * Math.cos(omega * t); // Radian
+            // CON LẮC ĐƠN DAO ĐỘNG
+            const pivotX = 175;
+            const pivotY = 70;
+            const rodLenPx = 140 + p.L * 45;
+            const theta = (p.A / p.L) * Math.cos(omega * t);
 
-            const bobX = pivotX + lenPx * Math.sin(theta);
-            const bobY = pivotY + lenPx * Math.cos(theta);
+            const bobX = pivotX + rodLenPx * Math.sin(theta);
+            const bobY = pivotY + rodLenPx * Math.cos(theta);
 
-            // Giá treo
+            // Giá treo gắn trần
             ctx.fillStyle = '#475569';
-            ctx.fillRect(pivotX - 30, pivotY - 8, 60, 8);
-
-            // Dây treo
+            ctx.beginPath();
+            ctx.roundRect(pivotX - 35, pivotY - 12, 70, 12, 3);
+            ctx.fill();
             ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Trục quay bi ổ đỡ
+            ctx.fillStyle = '#cbd5e1';
+            ctx.beginPath();
+            ctx.arc(pivotX, pivotY, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dây treo con lắc
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 2.2;
             ctx.beginPath();
             ctx.moveTo(pivotX, pivotY);
             ctx.lineTo(bobX, bobY);
             ctx.stroke();
 
-            // Quả cầu nặng
-            ctx.fillStyle = '#f59e0b';
+            // Vết cung dao động mờ
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.setLineDash([3, 3]);
             ctx.beginPath();
-            ctx.arc(bobX, bobY, 16, 0, Math.PI * 2);
+            ctx.arc(pivotX, pivotY, rodLenPx, Math.PI / 2 - 0.45, Math.PI / 2 + 0.45);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Quả cầu con lắc phản xạ ánh sáng (Glossy Brass Sphere)
+            const bobR = 15 + p.m * 2;
+            const sphereGrad = ctx.createRadialGradient(bobX - bobR * 0.35, bobY - bobR * 0.35, 2, bobX, bobY, bobR);
+            sphereGrad.addColorStop(0, '#fef08a');
+            sphereGrad.addColorStop(0.3, '#f59e0b');
+            sphereGrad.addColorStop(0.7, '#d97706');
+            sphereGrad.addColorStop(1, '#78350f');
+            ctx.fillStyle = sphereGrad;
+            ctx.beginPath();
+            ctx.arc(bobX, bobY, bobR, 0, Math.PI * 2);
             ctx.fill();
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 1.5;
             ctx.stroke();
+
+            // Vector vận tốc tiếp tuyến v (xanh lá)
+            const tangAngle = theta + Math.PI / 2;
+            const vLen = -v * 16;
+            PhET.drawVector(ctx, bobX, bobY, Math.cos(tangAngle) * vLen, Math.sin(tangAngle) * vLen, '#22c55e', 'v');
         }
 
-        // 2. Phía bên phải: Đồ thị li độ x(t) thời gian thực
-        const graphX = 320;
-        const graphY = 20;
-        const graphW = canvas.width - 340;
-        const graphH = canvas.height - 40;
+        // 2. Bên phải phía trên: Biểu đồ thanh năng lượng (PhET Energy Bars)
+        PhET.drawEnergyBars(ctx, 360, 40, 315, 150, [
+            { label: 'Động năng', shortLabel: 'Đ.Năng', val: Ek, color: '#22c55e' },
+            { label: 'Thế năng', shortLabel: 'Thế.Năng', val: Ep, color: '#38bdf8' },
+            { label: 'Cơ năng', shortLabel: 'Cơ.Năng', val: Etot, color: '#f59e0b' }
+        ]);
 
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(graphX, graphY, graphW, graphH);
-        ctx.strokeStyle = '#475569';
-        ctx.strokeRect(graphX, graphY, graphW, graphH);
+        // 3. Bên phải phía dưới: Đồ thị li độ x(t) thời gian thực
+        const graphX = 360;
+        const graphY = 205;
+        const graphW = 315;
+        const graphH = 210;
 
-        // Trục thời gian t và li độ x
-        const midY = graphY + graphH / 2;
-        ctx.strokeStyle = '#64748b';
-        ctx.lineWidth = 1.5;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
         ctx.beginPath();
-        ctx.moveTo(graphX, midY);
-        ctx.lineTo(graphX + graphW, midY);
+        ctx.roundRect(graphX, graphY, graphW, graphH, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('+A', graphX + 10, midY - 60);
-        ctx.fillText('0 (VTCB)', graphX + 10, midY - 6);
-        ctx.fillText('-A', graphX + 10, midY + 70);
-        ctx.fillText('Đồ thị li độ x(t)', graphX + 15, graphY + 25);
+        const midY = graphY + graphH / 2 + 10;
 
-        // Vẽ sóng dao động
+        // Trục tọa độ
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(graphX + 15, midY - 60); ctx.lineTo(graphX + graphW - 15, midY - 60);
+        ctx.moveTo(graphX + 15, midY + 60); ctx.lineTo(graphX + graphW - 15, midY + 60);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(graphX + 15, midY);
+        ctx.lineTo(graphX + graphW - 15, midY);
+        ctx.stroke();
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('📈 ĐỒ THỊ LI ĐỘ x(t)', graphX + 15, graphY + 22);
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px monospace';
+        ctx.fillText('+A', graphX + 18, midY - 64);
+        ctx.fillText('0', graphX + 18, midY - 4);
+        ctx.fillText('-A', graphX + 18, midY + 74);
+
+        // Vẽ đường cong sóng li độ
         if (waveHistory.length > 1) {
             ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 2.6;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 6;
             ctx.beginPath();
-            const stepX = graphW / 200;
+            const stepX = (graphW - 50) / 180;
             waveHistory.forEach((val, i) => {
-                const px = graphX + graphW - (waveHistory.length - i) * stepX;
+                const px = (graphX + graphW - 20) - (waveHistory.length - i) * stepX;
                 const py = midY - (val / p.A) * 60;
                 if (i === 0) ctx.moveTo(px, py);
                 else ctx.lineTo(px, py);
             });
             ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Điểm đầu bút vẽ phát sáng
+            const lastVal = waveHistory[waveHistory.length - 1];
+            const endPx = graphX + graphW - 20;
+            const endPy = midY - (lastVal / p.A) * 60;
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.arc(endPx, endPy, 4.5, 0, Math.PI * 2);
+            ctx.fill();
         }
+
+        ctx.restore();
     }
 
     let lastTime = performance.now();
@@ -261,7 +377,7 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 12. DAO ĐỘNG TẮT DẦN VÀ HIỆN TƯỢNG CỘNG HƯỞNG (Resonance)
+// 12. DAO ĐỘNG TẮT DẦN VÀ HIỆN TƯỢNG CỘNG HƯỞNG (Resonance PhET)
 // ─────────────────────────────────────────────────────────────
 (function initResonanceDamping() {
     const canvas = document.getElementById('resonanceCanvas');
@@ -269,7 +385,7 @@
     const ctx = canvas.getContext('2d');
 
     let t = 0;
-    let paused = false;
+    let motorAngle = 0;
 
     function getParams() {
         const omega0El = document.getElementById('res-omega0');
@@ -279,9 +395,9 @@
 
         return {
             omega0: omega0El ? parseFloat(omega0El.value) : 5.0, // rad/s
-            gamma: gammaEl ? parseFloat(gammaEl.value) : 0.3,    // Hệ số tắt dần
+            gamma: gammaEl ? parseFloat(gammaEl.value) : 0.3,    // Hệ số cản tắt dần
             driveOmega: driveOmegaEl ? parseFloat(driveOmegaEl.value) : 5.0, // Tần số cưỡng bức Omega
-            F0: f0El ? parseFloat(f0El.value) : 10.0 // Biên độ ngoại lực
+            F0: f0El ? parseFloat(f0El.value) : 10.0 // Biên độ lực cưỡng bức
         };
     }
 
@@ -297,8 +413,7 @@
         if (dwVal) dwVal.textContent = p.driveOmega.toFixed(1) + ' rad/s';
         if (f0Val) f0Val.textContent = p.F0.toFixed(1) + ' N';
 
-        // Biên độ cộng hưởng lý thuyết xác lập:
-        // A(Omega) = (F0/m) / sqrt((omega0^2 - Omega^2)^2 + 4 * gamma^2 * Omega^2)
+        // Biên độ xác lập: A = (F0/m) / sqrt((omega0^2 - Omega^2)^2 + 4 * gamma^2 * Omega^2)
         const denom = Math.sqrt(Math.pow(p.omega0 * p.omega0 - p.driveOmega * p.driveOmega, 2) + 4 * p.gamma * p.gamma * p.driveOmega * p.driveOmega);
         const amp = denom > 0 ? (p.F0 / denom) : 0;
 
@@ -308,8 +423,8 @@
         if (ampEl) ampEl.textContent = amp.toFixed(2) + ' cm';
         if (stEl) {
             const diff = Math.abs(p.driveOmega - p.omega0);
-            if (diff < 0.2) {
-                stEl.textContent = '🔥 CỘNG HƯỞNG CỰC ĐẠI (Ω ≈ ω₀)!';
+            if (diff < 0.25) {
+                stEl.textContent = '🔥 CỘNG HƯỞNG CỰC ĐẠI (Ω ≈ ω₀)! BIÊN ĐỘ ĐẠT ĐỈNH';
                 stEl.style.color = '#ef4444';
             } else {
                 stEl.textContent = 'Dao động điều hòa xác lập biên độ thường';
@@ -320,190 +435,293 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'DAO ĐỘNG TẮT DẦN & HIỆN TƯỢNG CỘNG HƯỞNG');
+
         const p = getParams();
-
-        // 1. Bên trái: Dao động của vật dưới tác dụng của ngoại lực tuần hoàn
-        const simW = 260;
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(15, 20, simW, canvas.height - 40);
-        ctx.strokeStyle = '#334155';
-        ctx.strokeRect(15, 20, simW, canvas.height - 40);
-
         const denom = Math.sqrt(Math.pow(p.omega0 * p.omega0 - p.driveOmega * p.driveOmega, 2) + 4 * p.gamma * p.gamma * p.driveOmega * p.driveOmega);
-        const amp = Math.min(90, (p.F0 / denom) * 15); // Pixel
+        const ampCm = (p.F0 / denom);
+        const ampPx = Math.min(85, ampCm * 14);
         const delta = Math.atan2(2 * p.gamma * p.driveOmega, p.omega0 * p.omega0 - p.driveOmega * p.driveOmega);
 
-        const currentDisp = amp * Math.cos(p.driveOmega * t - delta);
+        // Vị trí con lắc tức thời
+        const currentDisp = ampPx * Math.cos(p.driveOmega * t - delta);
 
-        const midX = 145;
-        const midY = canvas.height / 2;
-
-        // Lò xo
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3;
+        // 1. Bên trái: Bộ máy cơ học cưỡng bức & bình cản nhớt (Viscous Damper Beaker)
+        const simW = 270;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
         ctx.beginPath();
-        ctx.moveTo(35, midY);
-        const springLen = 100 + currentDisp;
-        const coils = 10;
-        const dx = springLen / coils;
-        for (let i = 1; i <= coils; i++) {
-            const sx = 35 + (i - 0.5) * dx;
-            const sy = midY + (i % 2 === 0 ? 14 : -14);
-            ctx.lineTo(sx, sy);
-        }
-        ctx.lineTo(35 + springLen, midY);
+        ctx.roundRect(25, 45, simW, 370, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // Khối hộp
-        ctx.fillStyle = Math.abs(p.driveOmega - p.omega0) < 0.2 ? '#ef4444' : '#0284c7';
-        ctx.fillRect(35 + springLen, midY - 25, 45, 50);
+        // Động cơ điện cưỡng bức quay bên trên (Electric Motor with Eccentric Crank)
+        const motorX = 160;
+        const motorY = 85;
+        const crankR = 18;
+
+        // Vỏ động cơ điện
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.roundRect(motorX - 35, motorY - 26, 70, 32, 4);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 10px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`MOTOR Ω = ${p.driveOmega.toFixed(1)}`, motorX, motorY - 10);
+
+        // Bánh đà lệch tâm quay
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(motorX, motorY + 12, crankR, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const crankX = motorX + Math.cos(motorAngle) * crankR;
+        const crankY = (motorY + 12) + Math.sin(motorAngle) * crankR;
+
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(crankX, crankY, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Lò xo treo từ chốt quay xuống vật nặng
+        const massTopY = 195 + currentDisp;
+        PhET.drawCoiledSpring(ctx, crankX, crankY, motorX, massTopY, 12, 14, '#38bdf8');
+
+        // Khối kim loại dao động (Mass Block)
+        const massW = 45;
+        const massH = 40;
+        const mGrad = ctx.createLinearGradient(motorX - massW / 2, 0, motorX + massW / 2, 0);
+        const isResonance = Math.abs(p.driveOmega - p.omega0) < 0.25;
+        mGrad.addColorStop(0, isResonance ? '#b91c1c' : '#0369a1');
+        mGrad.addColorStop(0.5, isResonance ? '#ef4444' : '#38bdf8');
+        mGrad.addColorStop(1, isResonance ? '#7f1d1d' : '#0c4a6e');
+        ctx.fillStyle = mGrad;
+        ctx.beginPath();
+        ctx.roundRect(motorX - massW / 2, massTopY, massW, massH, 4);
+        ctx.fill();
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(35 + springLen, midY - 25, 45, 50);
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
-        // Ngoại lực cưỡng bức (mũi tên đập tuần hoàn)
-        const fArrow = Math.cos(p.driveOmega * t) * 30;
-        drawArrow(ctx, 35 + springLen + 50, midY, 35 + springLen + 50 + fArrow, midY, '#f59e0b', 'F(t)');
+        // Que giảm chấn cắm xuống cốc dầu bên dưới
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(motorX, massTopY + massH);
+        ctx.lineTo(motorX, massTopY + massH + 45);
+        ctx.stroke();
 
-        // 2. Bên phải: Đồ thị đường cong cộng hưởng A(Omega)
-        const chartX = 300;
-        const chartY = 30;
-        const chartW = canvas.width - 325;
-        const chartH = canvas.height - 60;
+        // Cánh khuấy giảm chấn
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(motorX - 18, massTopY + massH + 40, 36, 6);
 
-        drawResonanceCurve(ctx, chartX, chartY, chartW, chartH, p);
+        // Cốc thủy tinh đựng dầu giảm xóc (Oil Damping Beaker)
+        const beakerX = motorX - 35;
+        const beakerY = 275;
+        const beakerW = 70;
+        const beakerH = 120;
+
+        // Dầu cản nhớt trong suốt
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+        ctx.fillRect(beakerX + 3, beakerY + 20, beakerW - 6, beakerH - 22);
+
+        // Vỏ cốc thủy tinh
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(beakerX, beakerY);
+        ctx.lineTo(beakerX, beakerY + beakerH);
+        ctx.lineTo(beakerX + beakerW, beakerY + beakerH);
+        ctx.lineTo(beakerX + beakerW, beakerY);
+        ctx.stroke();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px "Space Grotesk", sans-serif';
+        ctx.fillText(`Dầu cản (γ = ${p.gamma})`, motorX, beakerY + beakerH - 10);
+
+        // 2. Bên phải: Đồ thị đường cong cộng hưởng A(Ω) chuẩn mực
+        const chartX = 315;
+        const chartY = 45;
+        const chartW = 360;
+        const chartH = 370;
+
+        drawResonanceChart(ctx, chartX, chartY, chartW, chartH, p, isResonance);
+
+        ctx.restore();
     }
 
-    function drawResonanceCurve(ctx, ox, oy, w, h, p) {
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(ox, oy, w, h);
-        ctx.strokeStyle = '#475569';
-        ctx.strokeRect(ox, oy, w, h);
+    function drawResonanceChart(ctx, ox, oy, w, h, p, isResonance) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.beginPath();
+        ctx.roundRect(ox, oy, w, h, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
         const xBase = ox + 45;
-        const yBase = oy + h - 35;
+        const yBase = oy + h - 45;
         const dw = w - 65;
-        const dh = h - 65;
+        const dh = h - 85;
 
         // Trục tọa độ
         ctx.strokeStyle = '#94a3b8';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(xBase, yBase);
-        ctx.lineTo(xBase + dw, yBase); // Trục tần số cưỡng bức Omega
-        ctx.moveTo(xBase, yBase);
-        ctx.lineTo(xBase, yBase - dh); // Trục biên độ A
+        ctx.moveTo(xBase, yBase); ctx.lineTo(xBase + dw + 10, yBase);
+        ctx.moveTo(xBase, yBase); ctx.lineTo(xBase, yBase - dh - 15);
         ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText('Tần số ngoại lực Ω (rad/s)', xBase + dw - 90, yBase + 25);
-        ctx.fillText('Biên độ A', xBase - 40, yBase - dh + 10);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('Tần số ngoại lực Ω (rad/s) ►', xBase + dw + 10, yBase + 28);
+        ctx.textAlign = 'left';
+        ctx.fillText('▲ Biên độ A', xBase - 35, yBase - dh - 8);
 
-        // Vẽ đường cong biên độ A theo tần số Omega (từ 0 đến 12 rad/s)
         const maxOmega = 12.0;
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
 
-        let peakX = 0, peakY = 0;
+        // Vạch chia trục tần số
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        for (let i = 0; i <= 6; i++) {
+            const val = ((i / 6) * maxOmega).toFixed(0);
+            ctx.fillText(val, xBase + (i / 6) * dw, yBase + 16);
+        }
 
+        // Vẽ đường cong biên độ A theo Omega
+        let maxA = 0;
         for (let wTest = 0.1; wTest <= maxOmega; wTest += 0.1) {
             const d = Math.sqrt(Math.pow(p.omega0 * p.omega0 - wTest * wTest, 2) + 4 * p.gamma * p.gamma * wTest * wTest);
             const a = (p.F0 / d);
-            const px = xBase + (wTest / maxOmega) * dw;
-            const py = yBase - Math.min(dh - 10, a * 12);
+            if (a > maxA) maxA = a;
+        }
 
+        // Vùng diện tích gradient dưới đường cong cộng hưởng
+        const curveGrad = ctx.createLinearGradient(0, yBase - dh, 0, yBase);
+        curveGrad.addColorStop(0, 'rgba(239, 68, 68, 0.45)');
+        curveGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.25)');
+        curveGrad.addColorStop(1, 'rgba(56, 189, 248, 0.02)');
+
+        ctx.beginPath();
+        ctx.moveTo(xBase, yBase);
+        for (let wTest = 0.1; wTest <= maxOmega; wTest += 0.08) {
+            const d = Math.sqrt(Math.pow(p.omega0 * p.omega0 - wTest * wTest, 2) + 4 * p.gamma * p.gamma * wTest * wTest);
+            const a = (p.F0 / d);
+            const px = xBase + (wTest / maxOmega) * dw;
+            const py = yBase - (a / maxA) * (dh * 0.9);
+            ctx.lineTo(px, py);
+        }
+        ctx.lineTo(xBase + dw, yBase);
+        ctx.closePath();
+        ctx.fillStyle = curveGrad;
+        ctx.fill();
+
+        // Đường cong chính
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        for (let wTest = 0.1; wTest <= maxOmega; wTest += 0.08) {
+            const d = Math.sqrt(Math.pow(p.omega0 * p.omega0 - wTest * wTest, 2) + 4 * p.gamma * p.gamma * wTest * wTest);
+            const a = (p.F0 / d);
+            const px = xBase + (wTest / maxOmega) * dw;
+            const py = yBase - (a / maxA) * (dh * 0.9);
             if (wTest === 0.1) ctx.moveTo(px, py);
             else ctx.lineTo(px, py);
-
-            if (Math.abs(wTest - p.omega0) < 0.1) {
-                peakX = px;
-                peakY = py;
-            }
         }
         ctx.stroke();
 
-        // Đánh dấu đỉnh cộng hưởng omega0
-        ctx.fillStyle = '#ef4444';
-        ctx.beginPath();
-        ctx.arc(peakX, peakY, 5, 0, Math.PI * 2);
-        ctx.fill();
+        // Đỉnh cộng hưởng omega_0
+        const peakX = xBase + (p.omega0 / maxOmega) * dw;
+        const peakY = yBase - (dh * 0.9);
 
         ctx.strokeStyle = '#ef4444';
-        ctx.setLineDash([4, 4]);
+        ctx.setLineDash([4, 3]);
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.moveTo(peakX, peakY);
-        ctx.lineTo(peakX, yBase);
+        ctx.moveTo(peakX, yBase);
+        ctx.lineTo(peakX, peakY);
         ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillText('ω₀', peakX - 6, yBase + 16);
 
-        // Đánh dấu vị trí tần số cưỡng bức hiện tại
-        const curPx = xBase + (p.driveOmega / maxOmega) * dw;
-        ctx.fillStyle = '#f59e0b';
+        ctx.fillStyle = '#ef4444';
         ctx.beginPath();
-        ctx.arc(curPx, yBase, 6, 0, Math.PI * 2);
+        ctx.arc(peakX, peakY, 5.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillText('Ω hiện tại', curPx - 18, yBase + 30);
-    }
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.fillText('Đỉnh cộng hưởng ω₀', peakX, peakY - 12);
 
-    function drawArrow(ctx, fromX, fromY, toX, toY, color, label) {
-        if (Math.abs(toX - fromX) < 2) return;
-        const headlen = 6;
-        const sign = Math.sign(toX - fromX);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
+        // Vị trí tần số cưỡng bức hiện tại (Tracer Bead)
+        const curPx = xBase + (p.driveOmega / maxOmega) * dw;
+        const curD = Math.sqrt(Math.pow(p.omega0 * p.omega0 - p.driveOmega * p.driveOmega, 2) + 4 * p.gamma * p.gamma * p.driveOmega * p.driveOmega);
+        const curA = (p.F0 / curD);
+        const curPy = yBase - (curA / maxA) * (dh * 0.9);
+
+        ctx.fillStyle = isResonance ? '#ef4444' : '#f59e0b';
+        ctx.shadowColor = isResonance ? '#ef4444' : '#f59e0b';
+        ctx.shadowBlur = 10;
         ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
+        ctx.arc(curPx, curPy, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(toX - sign * headlen, toY - 4);
-        ctx.lineTo(toX - sign * headlen, toY + 4);
-        ctx.fill();
-
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(label, fromX, fromY - 8);
+        // Nhãn điểm hiện tại
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 10px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Ω = ${p.driveOmega.toFixed(1)}`, curPx, curPy - 14);
     }
 
     let lastTime = performance.now();
     function loop(now) {
         const dt = Math.min((now - lastTime) / 1000, 0.05);
         lastTime = now;
-        if (!paused) t += dt;
+        t += dt;
+        motorAngle += dt * p.driveOmega;
         draw();
         requestAnimationFrame(loop);
     }
-    requestAnimationFrame(loop);
+
+    let p = getParams();
+    function onInput() {
+        p = getParams();
+        syncLabels();
+    }
 
     ['res-omega0', 'res-gamma', 'res-drive-omega', 'res-f0'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => { syncLabels(); });
+        if (el) el.addEventListener('input', onInput);
     });
 
     syncLabels();
+    requestAnimationFrame(loop);
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 13. SÓNG CƠ, GIAO THOA VÀ SÓNG DỪNG (Waves & Interference & Standing)
+// 13. SÓNG CƠ, GIAO THOA VÀ SÓNG DỪNG (Waves & Interference & Standing PhET)
 // ─────────────────────────────────────────────────────────────
 (function initWavesInterferenceStanding() {
     const canvas = document.getElementById('wavesInterferenceCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let mode = 'standing'; // 'standing' or 'interference' or 'traveling'
+    let mode = 'standing'; // 'standing' or 'interference'
     let t = 0;
-    let paused = false;
 
     function getParams() {
         const harmEl = document.getElementById('wave-harmonics');
@@ -511,7 +729,7 @@
         const ampEl = document.getElementById('wave-amp');
 
         return {
-            harmonicN: harmEl ? parseInt(harmEl.value) : 3, // Bậc họa ba sóng dừng n = 1, 2, 3, 4, 5
+            harmonicN: harmEl ? parseInt(harmEl.value) : 3, // Bậc họa ba n = 1, 2, 3, 4, 5
             freq: freqEl ? parseFloat(freqEl.value) : 2.0,   // Hz
             amplitude: ampEl ? parseFloat(ampEl.value) : 40  // px
         };
@@ -527,7 +745,6 @@
         if (fVal) fVal.textContent = p.freq.toFixed(1) + ' Hz';
         if (aVal) aVal.textContent = p.amplitude.toFixed(0) + ' mm';
 
-        // Sóng dừng 2 đầu cố định: Số nút = n + 1, Số bụng = n
         const nodeEl = document.getElementById('wave-nodes-count');
         const antinodeEl = document.getElementById('wave-antinodes-count');
         const lambdaEl = document.getElementById('wave-lambda-val');
@@ -543,67 +760,114 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'SÓNG CƠ HỌC: SÓNG DỪNG & GIAO THOA SÓNG');
+
         const p = getParams();
 
         if (mode === 'standing') {
             drawStandingWave(ctx, p);
-        } else if (mode === 'interference') {
-            drawInterferencePattern(ctx, p);
         } else {
-            drawTravelingWave(ctx, p);
+            drawInterferencePattern(ctx, p);
         }
+
+        ctx.restore();
     }
 
     function drawStandingWave(ctx, p) {
-        const startX = 60;
-        const endX = canvas.width - 60;
+        const startX = 70;
+        const endX = 630;
         const len = endX - startX;
-        const midY = canvas.height / 2;
+        const midY = 230;
 
-        // Hai điểm đầu cố định
-        ctx.fillStyle = '#475569';
-        ctx.fillRect(startX - 15, midY - 60, 15, 120);
-        ctx.fillRect(endX, midY - 60, 15, 120);
+        // Hai ngàm kẹp cố định đầu dây bằng gang đúc (Heavy Clamps)
+        function drawClamp(cx, cy) {
+            ctx.fillStyle = '#334155';
+            ctx.beginPath();
+            ctx.roundRect(cx - 15, cy - 70, 30, 140, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.stroke();
 
-        // Trục trung tâm (nét đứt)
-        ctx.strokeStyle = '#334155';
-        ctx.setLineDash([4, 4]);
+            // Đinh ốc vặn cố định
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath();
+            ctx.arc(cx, cy - 40, 6, 0, Math.PI * 2);
+            ctx.arc(cx, cy + 40, 6, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        drawClamp(startX - 15, midY);
+        drawClamp(endX + 15, midY);
+
+        // Trục trung tâm nét đứt
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.setLineDash([6, 5]);
         ctx.beginPath();
         ctx.moveTo(startX, midY);
         ctx.lineTo(endX, midY);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Sóng dừng: u(x, t) = 2A * sin(2*pi*x / lambda) * cos(omega * t)
-        // Với 2 đầu cố định: lambda = 2L / n
         const omega = 2 * Math.PI * p.freq;
         const timeFactor = Math.cos(omega * t);
 
-        // Vẽ bóng mờ biên độ bao bọc (Envelop)
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
-        ctx.lineWidth = 1.5;
+        // 1. Vùng bao biên độ dao động (Bóng mờ dạ quang)
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
         ctx.beginPath();
+        ctx.moveTo(startX, midY);
         for (let x = 0; x <= len; x += 3) {
             const kx = (p.harmonicN * Math.PI * x) / len;
             const envY = midY - p.amplitude * Math.sin(kx);
-            if (x === 0) ctx.moveTo(startX + x, envY);
-            else ctx.lineTo(startX + x, envY);
+            ctx.lineTo(startX + x, envY);
         }
         for (let x = len; x >= 0; x -= 3) {
             const kx = (p.harmonicN * Math.PI * x) / len;
             const envY = midY + p.amplitude * Math.sin(kx);
             ctx.lineTo(startX + x, envY);
         }
-        ctx.stroke();
+        ctx.closePath();
+        ctx.fill();
 
-        // Vẽ sợi dây sóng tức thời
+        // 2. Đường bao nét đứt trên dưới
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (let x = 0; x <= len; x += 3) {
+            const kx = (p.harmonicN * Math.PI * x) / len;
+            ctx.lineTo(startX + x, midY - p.amplitude * Math.sin(kx));
+        }
+        ctx.stroke();
+        ctx.beginPath();
+        for (let x = 0; x <= len; x += 3) {
+            const kx = (p.harmonicN * Math.PI * x) / len;
+            ctx.lineTo(startX + x, midY + p.amplitude * Math.sin(kx));
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 3. Sợi dây sóng đàn hồi đang rung rực rỡ phát sáng
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 4.5;
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        for (let x = 0; x <= len; x += 2) {
+            const kx = (p.harmonicN * Math.PI * x) / len;
+            const curY = midY - p.amplitude * Math.sin(kx) * timeFactor;
+            if (x === 0) ctx.moveTo(startX + x, curY);
+            else ctx.lineTo(startX + x, curY);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Lõi sáng trắng giữa sợi dây
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
         for (let x = 0; x <= len; x += 2) {
             const kx = (p.harmonicN * Math.PI * x) / len;
@@ -613,89 +877,106 @@
         }
         ctx.stroke();
 
-        // Đánh dấu các Nút sóng (màu đỏ đứng yên) và Bụng sóng (màu vàng dao động)
+        // 4. Đánh dấu các Nút sóng (Nodes - Màu đỏ đứng yên)
         for (let i = 0; i <= p.harmonicN; i++) {
             const nx = startX + (i / p.harmonicN) * len;
             ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 8;
             ctx.beginPath();
-            ctx.arc(nx, midY, 6, 0, Math.PI * 2);
+            ctx.arc(nx, midY, 6.5, 0, Math.PI * 2);
             ctx.fill();
+            ctx.shadowBlur = 0;
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2;
             ctx.stroke();
+
+            ctx.fillStyle = '#f87171';
+            ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Nút', nx, midY + 22);
         }
 
-        // Chú thích
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(`Bậc họa ba: n = ${p.harmonicN} (Số bụng: ${p.harmonicN}, Số nút: ${p.harmonicN + 1})`, startX, 40);
-        ctx.fillStyle = '#ef4444';
-        ctx.fillText('● Nút sóng (Biên độ = 0)', startX, 65);
-        ctx.fillStyle = '#f59e0b';
-        ctx.fillText('▲ Bụng sóng (Biên độ cực đại 2A)', startX + 160, 65);
+        // 5. Đánh dấu các Bụng sóng (Antinodes - Màu vàng cực đại)
+        for (let i = 0; i < p.harmonicN; i++) {
+            const ax = startX + ((i + 0.5) / p.harmonicN) * len;
+            ctx.fillStyle = '#facc15';
+            ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Bụng', ax, midY - p.amplitude - 14);
+        }
+
+        // Bảng HUD thông số sóng dừng
+        PhET.drawHUD(ctx, 35, 340, '📊 ĐẶC TRƯNG SÓNG DỪNG', [
+            { label: 'Bậc họa ba', val: `n = ${p.harmonicN}`, color: '#38bdf8' },
+            { label: 'Số nút sóng', val: `${p.harmonicN + 1} nút`, color: '#f87171' },
+            { label: 'Số bụng sóng', val: `${p.harmonicN} bụng`, color: '#facc15' },
+            { label: 'Bước sóng λ', val: `${((2 * 1.2) / p.harmonicN).toFixed(2)} m`, color: '#4ade80' }
+        ], 630);
     }
 
     function drawInterferencePattern(ctx, p) {
-        // Giao thoa 2 nguồn sóng trên mặt nước
-        const s1 = { x: canvas.width / 2 - 80, y: canvas.height / 2 };
-        const s2 = { x: canvas.width / 2 + 80, y: canvas.height / 2 };
-        const lambda = 35; // pixel
-        const omega = 2 * Math.PI * p.freq;
+        // Giao thoa sóng nước 2D (Ripple Tank)
+        const s1 = { x: 260, y: 210 };
+        const s2 = { x: 440, y: 210 };
+        const lambda = 36;
 
-        // Vẽ các vòng tròn sóng đồng tâm lan tỏa
-        ctx.lineWidth = 1.5;
-        for (let r = 10; r < 280; r += lambda) {
-            const currentR = (r + t * 40) % 280;
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        // Vùng chậu nước ripple tank
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.fillRect(40, 45, 620, 340);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(40, 45, 620, 340);
+
+        // Các vòng sóng đồng tâm lan tỏa
+        for (let r = 8; r < 360; r += lambda) {
+            const curR = (r + t * 45) % 360;
+            const alpha = Math.max(0.05, 0.45 * (1 - curR / 360));
+            ctx.strokeStyle = `rgba(56, 189, 248, ${alpha})`;
+            ctx.lineWidth = 2;
+
             ctx.beginPath();
-            ctx.arc(s1.x, s1.y, currentR, 0, Math.PI * 2);
+            ctx.arc(s1.x, s1.y, curR, 0, Math.PI * 2);
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.arc(s2.x, s2.y, currentR, 0, Math.PI * 2);
+            ctx.arc(s2.x, s2.y, curR, 0, Math.PI * 2);
             ctx.stroke();
         }
 
-        // Hai nguồn sóng
-        ctx.fillStyle = '#ef4444';
-        ctx.beginPath();
-        ctx.arc(s1.x, s1.y, 6, 0, Math.PI * 2);
-        ctx.arc(s2.x, s2.y, 6, 0, Math.PI * 2);
-        ctx.fill();
+        // 2 đầu cần rung tạo sóng
+        function drawSource(s, label) {
+            ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText('S₁', s1.x - 8, s1.y - 12);
-        ctx.fillText('S₂', s2.x - 8, s2.y - 12);
-        ctx.fillText('Giao thoa sóng nước 2 nguồn kết hợp đồng pha (d₂ - d₁ = kλ)', 40, 30);
-    }
-
-    function drawTravelingWave(ctx, p) {
-        // Sóng ngang truyền lan truyền
-        const midY = canvas.height / 2;
-        const lambda = 120;
-        const omega = 2 * Math.PI * p.freq;
-
-        ctx.strokeStyle = '#22c55e';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        for (let x = 40; x <= canvas.width - 40; x += 2) {
-            const y = midY - p.amplitude * Math.sin((2 * Math.PI * x) / lambda - omega * t);
-            if (x === 40) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, s.x, s.y - 14);
         }
-        ctx.stroke();
+        drawSource(s1, 'Nguồn S₁');
+        drawSource(s2, 'Nguồn S₂');
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText('Sóng cơ truyền theo trục Ox: u(x,t) = A·cos(ωt - 2πx/λ)', 50, 40);
+        // Chú giải
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🌊 BỂ TẠO SÓNG NƯỚC GIAO THOA 2 NGUỒN KẾT HỢP (d₂ - d₁ = kλ)', 350, 75);
     }
 
     let lastTime = performance.now();
     function loop(now) {
         const dt = Math.min((now - lastTime) / 1000, 0.05);
         lastTime = now;
-        if (!paused) t += dt;
+        t += dt;
         draw();
         requestAnimationFrame(loop);
     }
@@ -715,4 +996,3 @@
 
     syncLabels();
 })();
-

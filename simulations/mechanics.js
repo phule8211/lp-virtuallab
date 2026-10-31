@@ -826,14 +826,16 @@
 // ─────────────────────────────────────────────────────────────
 // 2. ĐỊNH LUẬT NEWTON VÀ MA SÁT TRÊN MẶT PHẲNG NGHIÊNG (Newton & Friction)
 // ─────────────────────────────────────────────────────────────
+// 2. ĐỊNH LUẬT NEWTON & MA SÁT TRÊN MẶT PHẲNG NGHIÊNG (PhET Friction Ramp)
+// ─────────────────────────────────────────────────────────────
 (function initNewtonFriction() {
     const canvas = document.getElementById('newtonFrictionCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let x = 80; // Tọa độ vật trên mặt phẳng nghiêng (pixel)
+    let x = 80;
     let v = 0;
-    let running = false;
+    let running = true;
     let paused = false;
 
     function getParams() {
@@ -874,6 +876,7 @@
         x = 80;
         v = 0;
         running = true;
+        paused = false;
     }
 
     function update(dt) {
@@ -881,15 +884,9 @@
         const p = getParams();
         const alphaRad = (p.alphaDeg * Math.PI) / 180;
 
-        // Phân tích lực theo hệ quy chiếu mặt nghiêng:
-        // Trọng lực: P_parallel = m*g*sin(alpha), P_perp = m*g*cos(alpha)
-        // Phản lực pháp tuyến: N = P_perp = m*g*cos(alpha)
         const N = p.m * p.g * Math.cos(alphaRad);
-        const P_par = p.m * p.g * Math.sin(alphaRad); // Hướng trượt xuống dốc
+        const P_par = p.m * p.g * Math.sin(alphaRad);
         const fMaxStatic = p.muS * N;
-
-        // Tổng ngoại lực song song mặt phẳng không tính ma sát: (F_kéo hướng lên dốc, P_par hướng xuống)
-        // Chiều dương quy ước: Hướng lên dốc
         const F_net_no_friction = p.fPull - P_par;
 
         let a = 0;
@@ -897,22 +894,18 @@
         let stateText = 'Đang đứng yên (Ma sát nghỉ)';
 
         if (Math.abs(v) < 0.001) {
-            // Đang đứng yên -> kiểm tra xem có vượt quá ma sát nghỉ cực đại không
             if (Math.abs(F_net_no_friction) <= fMaxStatic) {
-                // Đứng yên
-                frictionForce = -F_net_no_friction; // Cân bằng hoàn hảo
+                frictionForce = -F_net_no_friction;
                 a = 0;
                 v = 0;
                 stateText = 'Đứng yên cân bằng (F_ms nghỉ = ' + Math.abs(frictionForce).toFixed(1) + ' N)';
             } else {
-                // Bắt đầu trượt!
                 const sign = Math.sign(F_net_no_friction);
                 frictionForce = -sign * p.muK * N;
                 a = (F_net_no_friction + frictionForce) / p.m;
                 stateText = sign > 0 ? 'Trượt lên dốc gia tốc a > 0' : 'Trượt xuống dốc gia tốc a < 0';
             }
         } else {
-            // Đang chuyển động -> chịu ma sát trượt ngược chiều vận tốc
             const sign = Math.sign(v);
             frictionForce = -sign * p.muK * N;
             a = (F_net_no_friction + frictionForce) / p.m;
@@ -920,20 +913,11 @@
         }
 
         v += a * dt;
-        x += v * dt * 30; // Scale pixel
+        x += v * dt * 25;
 
-        // Giới hạn biên mặt nghiêng (chiều dài dốc khoảng 450 px)
-        if (x < 40) {
-            x = 40;
-            v = 0;
-            stateText = 'Chạm chân dốc';
-        } else if (x > 500) {
-            x = 500;
-            v = 0;
-            stateText = 'Chạm đỉnh dốc';
-        }
+        if (x < 50) { x = 50; v = 0; stateText = 'Chạm chân dốc'; }
+        else if (x > 500) { x = 500; v = 0; stateText = 'Chạm đỉnh dốc'; }
 
-        // Cập nhật số liệu
         const aEl = document.getElementById('nf-accel');
         const vEl = document.getElementById('nf-velocity');
         const nEl = document.getElementById('nf-norm-force');
@@ -949,23 +933,27 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'MẶT PHẲNG NGHIÊNG & MA SÁT NEWTON');
+
         const p = getParams();
         const alphaRad = (p.alphaDeg * Math.PI) / 180;
 
-        // Tọa độ gốc chân dốc
         const baseX = 80;
-        const baseY = canvas.height - 60;
-        const rampLength = 520;
+        const baseY = 390;
+        const rampLength = 540;
         const topX = baseX + rampLength * Math.cos(alphaRad);
         const topY = baseY - rampLength * Math.sin(alphaRad);
 
-        // 1. Vẽ nêm mặt phẳng nghiêng
-        ctx.fillStyle = '#1e293b';
+        // 1. Nêm mặt phẳng nghiêng bằng gỗ/kim loại cao cấp
+        const rampGrad = ctx.createLinearGradient(baseX, baseY, topX, topY);
+        rampGrad.addColorStop(0, '#334155');
+        rampGrad.addColorStop(0.5, '#1e293b');
+        rampGrad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = rampGrad;
         ctx.beginPath();
         ctx.moveTo(baseX, baseY);
         ctx.lineTo(topX, topY);
@@ -973,23 +961,28 @@
         ctx.closePath();
         ctx.fill();
 
+        // Bề mặt dốc có lớp trượt phản quang
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(baseX, baseY);
+        ctx.lineTo(topX, topY);
         ctx.stroke();
 
-        // Đánh dấu cung góc nghiêng alpha
-        ctx.strokeStyle = '#fbbf24';
+        // Cung đo góc nghiêng alpha với thước đo
+        ctx.strokeStyle = '#facc15';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(baseX, baseY, 50, -alphaRad, 0);
+        ctx.arc(baseX, baseY, 65, -alphaRad, 0);
         ctx.stroke();
-        ctx.fillStyle = '#fbbf24';
-        ctx.font = '13px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(`α = ${p.alphaDeg}°`, baseX + 60, baseY - 12);
 
-        // 2. Vị trí khối hộp trên dốc
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 13px "Space Grotesk", sans-serif';
+        ctx.fillText(`α = ${p.alphaDeg}°`, baseX + 80, baseY - 16);
+
+        // 2. Khối gỗ ma sát trượt trên dốc (Textured Wooden/Brass Block)
         const boxDist = x;
-        const boxSize = 36 + p.m * 2;
+        const boxSize = 42 + p.m * 2;
         const cx = baseX + boxDist * Math.cos(alphaRad);
         const cy = baseY - boxDist * Math.sin(alphaRad);
 
@@ -997,63 +990,44 @@
         ctx.translate(cx, cy);
         ctx.rotate(-alphaRad);
 
-        // Vẽ khối hộp
-        ctx.fillStyle = '#0284c7';
-        ctx.fillRect(-boxSize / 2, -boxSize, boxSize, boxSize);
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(-boxSize / 2, -boxSize, boxSize, boxSize);
+        // Thân khối hộp gỗ 3D
+        const bGrad = ctx.createLinearGradient(-boxSize/2, -boxSize, boxSize/2, 0);
+        bGrad.addColorStop(0, '#d97706');
+        bGrad.addColorStop(0.5, '#f59e0b');
+        bGrad.addColorStop(1, '#b45309');
+        ctx.fillStyle = bGrad;
+        ctx.beginPath();
+        ctx.roundRect(-boxSize / 2, -boxSize, boxSize, boxSize, 4);
+        ctx.fill();
+        ctx.strokeStyle = '#fef3c7';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px "Space Grotesk", -apple-system, sans-serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px "Space Grotesk", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(`m = ${p.m}kg`, 0, -boxSize / 2 + 4);
+        ctx.fillText(`${p.m}kg`, 0, -boxSize / 2 + 4);
 
-        // 3. Vẽ các vector lực từ tâm vật (tọa độ local: 0, -boxSize/2)
+        // Các vector lực: N, F_keo, F_ms
         const ox = 0, oy = -boxSize / 2;
-        const scale = 2.0;
-
-        // Phản lực N (hướng lên trên vuông góc dốc: local -y)
+        const scale = 1.6;
         const N = p.m * p.g * Math.cos(alphaRad);
-        drawVector(ctx, ox, oy, 0, -N * scale, '#10b981', `N = ${N.toFixed(1)}N`);
 
-        // Lực kéo F_kéo (hướng theo chiều dốc: local +x)
+        // Phản lực N vuông góc lên trên
+        PhET.drawVector(ctx, ox, oy, 0, -N * scale, '#4ade80', `N = ${N.toFixed(1)}N`, 2.5);
+
+        // Lực kéo F_kéo hướng lên theo mặt nghiêng (+x)
         if (p.fPull > 0) {
-            drawVector(ctx, ox, oy, p.fPull * scale, 0, '#f59e0b', `F_kéo = ${p.fPull}N`);
+            PhET.drawVector(ctx, ox, oy, p.fPull * scale, 0, '#facc15', `F_kéo = ${p.fPull}N`, 2.5);
         }
 
         ctx.restore();
 
-        // Trọng lực P = mg (hướng thẳng đứng xuống dưới: global +y)
+        // Trọng lực P = mg hướng thẳng đứng xuống đất
         const P = p.m * p.g;
-        drawVector(ctx, cx, cy - boxSize / 2, 0, P * scale, '#ef4444', `P = ${P.toFixed(1)}N`);
-    }
+        PhET.drawVector(ctx, cx, cy - boxSize / 2, 0, P * 1.6, '#ef4444', `P = ${P.toFixed(1)}N`, 2.5);
 
-    function drawVector(ctx, fromX, fromY, dx, dy, color, label) {
-        const toX = fromX + dx;
-        const toY = fromY + dy;
-        const angle = Math.atan2(dy, dx);
-        const headlen = 8;
-
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.stroke();
-
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.fill();
-
-        if (label) {
-            ctx.fillStyle = color;
-            ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-            ctx.fillText(label, toX + 6, toY + 4);
-        }
+        ctx.restore();
     }
 
     let lastTime = performance.now();
@@ -1068,7 +1042,7 @@
 
     ['nf-mass', 'nf-alpha', 'nf-mus', 'nf-muk', 'nf-fpull', 'nf-g'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => { syncLabels(); resetSimulation(); });
+        if (el) el.addEventListener('input', () => { syncLabels(); });
     });
 
     const resetBtn = document.getElementById('nf-reset');
@@ -1078,16 +1052,15 @@
     if (pauseBtn) {
         pauseBtn.addEventListener('click', () => {
             paused = !paused;
-            pauseBtn.textContent = paused ? '▶️ Tiếp tục' : '⏸️ Tạm dừng';
+            pauseBtn.textContent = paused ? 'Tiếp tục' : 'Tạm dừng';
         });
     }
 
     syncLabels();
-    resetSimulation();
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 3. CHUYỂN ĐỘNG TRÒN ĐỀU VÀ LỰC HƯỚNG TÂM (Circular Motion)
+// 3. CHUYỂN ĐỘNG TRÒN ĐỀU & LỰC HƯỚNG TÂM (PhET Circular Motion)
 // ─────────────────────────────────────────────────────────────
 (function initCircularMotion() {
     const canvas = document.getElementById('circularMotionCanvas');
@@ -1095,21 +1068,19 @@
     const ctx = canvas.getContext('2d');
 
     let theta = 0;
-    let stringBroken = false;
-    let ballX = 0, ballY = 0;
-    let flyVx = 0, flyVy = 0;
     let trail = [];
-    let paused = false;
+    let isStringCut = false;
+    let cutPos = { x: 0, y: 0, vx: 0, vy: 0 };
 
     function getParams() {
         const rEl = document.getElementById('cm-radius');
-        const omegaEl = document.getElementById('cm-omega');
+        const wEl = document.getElementById('cm-omega');
         const mEl = document.getElementById('cm-mass');
 
         return {
-            r: rEl ? parseFloat(rEl.value) : 140, // pixel
-            omega: omegaEl ? parseFloat(omegaEl.value) : 2.5, // rad/s
-            m: mEl ? parseFloat(mEl.value) : 1.5 // kg
+            R: rEl ? parseFloat(rEl.value) : 1.5,
+            omega: wEl ? parseFloat(wEl.value) : 3.0,
+            m: mEl ? parseFloat(mEl.value) : 1.0
         };
     }
 
@@ -1118,169 +1089,134 @@
         const rVal = document.getElementById('cm-radius-val');
         const wVal = document.getElementById('cm-omega-val');
         const mVal = document.getElementById('cm-mass-val');
-        if (rVal) rVal.textContent = (p.r / 50).toFixed(2) + ' m';
+
+        if (rVal) rVal.textContent = p.R.toFixed(1) + ' m';
         if (wVal) wVal.textContent = p.omega.toFixed(1) + ' rad/s';
         if (mVal) mVal.textContent = p.m.toFixed(1) + ' kg';
-    }
 
-    function resetSimulation() {
-        theta = 0;
-        stringBroken = false;
-        trail = [];
-    }
-
-    function cutString() {
-        if (stringBroken) return;
-        const p = getParams();
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        ballX = centerX + p.r * Math.cos(theta);
-        ballY = centerY + p.r * Math.sin(theta);
-
-        // Vận tốc tiếp tuyến v = omega * r
-        const v = p.omega * (p.r / 50); // m/s
-        const vPix = p.omega * p.r; // px/s
-        flyVx = -vPix * Math.sin(theta);
-        flyVy = vPix * Math.cos(theta);
-        stringBroken = true;
-    }
-
-    function update(dt) {
-        if (paused) return;
-        const p = getParams();
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-
-        if (!stringBroken) {
-            theta += p.omega * dt;
-            ballX = centerX + p.r * Math.cos(theta);
-            ballY = centerY + p.r * Math.sin(theta);
-        } else {
-            // Chuyển động thẳng đều theo quán tính (tiếp tuyến)
-            ballX += flyVx * dt;
-            ballY += flyVy * dt;
-        }
-
-        trail.push({ x: ballX, y: ballY });
-        if (trail.length > 50) trail.shift();
-
-        // Tính toán các đại lượng vật lý
-        const realR = p.r / 50; // mét
-        const vLinear = p.omega * realR;
-        const aCentripetal = stringBroken ? 0 : (vLinear * vLinear) / realR;
-        const fCentripetal = stringBroken ? 0 : p.m * aCentripetal;
-        const period = p.omega > 0 ? (2 * Math.PI) / p.omega : 0;
+        const vLinear = p.omega * p.R;
+        const acp = p.omega * p.omega * p.R;
+        const Fcp = p.m * acp;
+        const period = (2 * Math.PI) / p.omega;
 
         const vEl = document.getElementById('cm-linear-v');
-        const acpEl = document.getElementById('cm-acp');
-        const fcpEl = document.getElementById('cm-fcp');
+        const aEl = document.getElementById('cm-acp');
+        const fEl = document.getElementById('cm-fcp');
         const tEl = document.getElementById('cm-period');
 
         if (vEl) vEl.textContent = vLinear.toFixed(2) + ' m/s';
-        if (acpEl) acpEl.textContent = aCentripetal.toFixed(2) + ' m/s²';
-        if (fcpEl) fcpEl.textContent = fCentripetal.toFixed(2) + ' N';
+        if (aEl) aEl.textContent = acp.toFixed(2) + ' m/s²';
+        if (fEl) fEl.textContent = Fcp.toFixed(2) + ' N';
         if (tEl) tEl.textContent = period.toFixed(2) + ' s';
+    }
+
+    function update(dt) {
+        const p = getParams();
+        if (!isStringCut) {
+            theta += p.omega * dt;
+        } else {
+            cutPos.x += cutPos.vx * dt * 45;
+            cutPos.y += cutPos.vy * dt * 45;
+        }
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const p = getParams();
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
 
-        // 1. Quỹ đạo tròn (nét đứt)
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([4, 4]);
+        PhET.drawLabBackground(ctx, 700, 460, 'CHUYỂN ĐỘNG TRÒN ĐỀU & LỰC HƯỚNG TÂM');
+
+        const p = getParams();
+        const cx = 350;
+        const cy = 230;
+        const rPx = p.R * 85;
+
+        // 1. Bàn quay tròn / Quỹ đạo tròn (Turntable Track)
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
         ctx.beginPath();
-        ctx.arc(centerX, centerY, p.r, 0, Math.PI * 2);
+        ctx.arc(cx, cy, rPx + 25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Đường quỹ đạo nét đứt
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, rPx, 0, Math.PI * 2);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // 2. Vệt quỹ đạo
-        if (trail.length > 1) {
-            ctx.strokeStyle = stringBroken ? 'rgba(239, 68, 68, 0.4)' : 'rgba(56, 189, 248, 0.4)';
-            ctx.lineWidth = 2;
+        // Trục quay trung tâm (Pivot Axis)
+        ctx.fillStyle = '#64748b';
+        ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = '#f59e0b'; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+
+        // 2. Tọa độ vật
+        let bx = 0, by = 0;
+        if (!isStringCut) {
+            bx = cx + rPx * Math.cos(theta);
+            by = cy + rPx * Math.sin(theta);
+
+            // Dây treo thép nối từ tâm tới vật
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 2.5;
             ctx.beginPath();
-            trail.forEach((pt, i) => {
-                if (i === 0) ctx.moveTo(pt.x, pt.y);
-                else ctx.lineTo(pt.x, pt.y);
-            });
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(bx, by);
             ctx.stroke();
+        } else {
+            bx = cutPos.x;
+            by = cutPos.y;
         }
 
-        // 3. Tâm quay & Sợi dây
-        ctx.fillStyle = '#ffffff';
+        // 3. Quả cầu kim loại chuyển động
+        const bobR = 14 + p.m * 2.5;
+        const ballGrad = ctx.createRadialGradient(bx - 4, by - 4, 2, bx, by, bobR);
+        ballGrad.addColorStop(0, '#fef08a');
+        ballGrad.addColorStop(0.3, '#f59e0b');
+        ballGrad.addColorStop(1, '#b45309');
+        ctx.fillStyle = ballGrad;
         ctx.beginPath();
-        ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (!stringBroken) {
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(ballX, ballY);
-            ctx.stroke();
-        }
-
-        // 4. Quả nặng
-        ctx.fillStyle = '#0284c7';
-        ctx.beginPath();
-        ctx.arc(ballX, ballY, 12, 0, Math.PI * 2);
+        ctx.arc(bx, by, bobR, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // 5. Các vector khi chưa đứt dây
-        if (!stringBroken) {
-            // Vector tiếp tuyến v (màu xanh lá)
-            const vScale = 15;
-            const vx = -Math.sin(theta) * vScale;
-            const vy = Math.cos(theta) * vScale;
-            drawArrow(ctx, ballX, ballY, ballX + vx, ballY + vy, '#22c55e', 'v (tiếp tuyến)');
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${p.m}kg`, bx, by + 4);
 
-            // Vector gia tốc hướng tâm a_ht / lực F_ht (màu đỏ hướng về tâm)
-            const aScale = 25;
-            const ax = -Math.cos(theta) * aScale;
-            const ay = -Math.sin(theta) * aScale;
-            drawArrow(ctx, ballX, ballY, ballX + ax, ballY + ay, '#ef4444', 'F_ht (hướng tâm)');
-        } else {
-            // Sau khi đứt dây: bay theo tiếp tuyến
-            const speed = Math.hypot(flyVx, flyVy);
-            if (speed > 0) {
-                const vx = (flyVx / speed) * 30;
-                const vy = (flyVy / speed) * 30;
-                drawArrow(ctx, ballX, ballY, ballX + vx, ballY + vy, '#22c55e', 'v (quán tính)');
-            }
+        if (!isStringCut) {
+            // Vector vận tốc tiếp tuyến v (xanh lá)
+            const vxLen = -Math.sin(theta) * (p.omega * p.R * 14);
+            const vyLen = Math.cos(theta) * (p.omega * p.R * 14);
+            PhET.drawVector(ctx, bx, by, vxLen, vyLen, '#22c55e', 'v', 2.8);
+
+            // Vector lực hướng tâm F_cp (đỏ hướng về tâm)
+            const fxLen = -Math.cos(theta) * (p.m * p.omega * p.omega * 5.5);
+            const fyLen = -Math.sin(theta) * (p.m * p.omega * p.omega * 5.5);
+            PhET.drawVector(ctx, bx, by, fxLen, fyLen, '#ef4444', 'F_ht', 2.8);
         }
-    }
 
-    function drawArrow(ctx, fromX, fromY, toX, toY, color, label) {
-        const headlen = 8;
-        const angle = Math.atan2(toY - fromY, toX - fromX);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.stroke();
+        // Bảng HUD thông số
+        const vLinear = p.omega * p.R;
+        const acp = p.omega * p.omega * p.R;
+        const Fcp = p.m * acp;
+        PhET.drawHUD(ctx, 480, 290, '📊 CHUYỂN ĐỘNG TRÒN ĐỀU', [
+            { label: 'Vận tốc dài v', val: `${vLinear.toFixed(2)} m/s`, color: '#22c55e' },
+            { label: 'Gia tốc hướng tâm', val: `${acp.toFixed(2)} m/s²`, color: '#facc15' },
+            { label: 'Lực hướng tâm F_ht', val: `${Fcp.toFixed(2)} N`, color: '#ef4444' }
+        ], 200);
 
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.fill();
-
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(label, toX + 5, toY + 4);
+        ctx.restore();
     }
 
     let lastTime = performance.now();
@@ -1295,31 +1231,49 @@
 
     ['cm-radius', 'cm-omega', 'cm-mass'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => { syncLabels(); resetSimulation(); });
+        if (el) el.addEventListener('input', () => { syncLabels(); });
     });
 
     const cutBtn = document.getElementById('cm-cut-string');
-    if (cutBtn) cutBtn.addEventListener('click', cutString);
+    if (cutBtn) {
+        cutBtn.addEventListener('click', () => {
+            if (!isStringCut) {
+                const p = getParams();
+                const rPx = p.R * 85;
+                isStringCut = true;
+                cutPos = {
+                    x: 350 + rPx * Math.cos(theta),
+                    y: 230 + rPx * Math.sin(theta),
+                    vx: -Math.sin(theta) * (p.omega * p.R),
+                    vy: Math.cos(theta) * (p.omega * p.R)
+                };
+            }
+        });
+    }
 
     const resetBtn = document.getElementById('cm-reset');
-    if (resetBtn) resetBtn.addEventListener('click', resetSimulation);
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            isStringCut = false;
+            theta = 0;
+        });
+    }
 
     syncLabels();
-    resetSimulation();
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 4. VA CHẠM VÀ BẢO TOÀN ĐỘNG LƯỢNG (Collisions Lab)
+// 4. VA CHẠM & BẢO TOÀN ĐỘNG LƯỢNG (PhET Collision Lab)
 // ─────────────────────────────────────────────────────────────
 (function initCollisionLab() {
     const canvas = document.getElementById('collisionCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let b1 = { x: 120, y: 220, vx: 4, m: 2, r: 24, color: '#38bdf8' };
-    let b2 = { x: 480, y: 220, vx: -2, m: 3, r: 30, color: '#f59e0b' };
+    let b1 = { x: 140, y: 230, vx: 4, m: 2, r: 28, color: '#38bdf8' };
+    let b2 = { x: 520, y: 230, vx: -2, m: 3, r: 34, color: '#f59e0b' };
     let running = true;
-    let restitution = 1.0; // 1 = Đàn hồi, 0 = Va chạm mềm
+    let restitution = 1.0;
 
     function getParams() {
         const m1El = document.getElementById('col-m1');
@@ -1354,14 +1308,14 @@
     function resetSimulation() {
         const p = getParams();
         b1.m = p.m1;
-        b1.r = 18 + p.m1 * 3;
+        b1.r = 22 + p.m1 * 3.5;
         b1.vx = p.v1;
-        b1.x = 100;
+        b1.x = 140;
 
         b2.m = p.m2;
-        b2.r = 18 + p.m2 * 3;
+        b2.r = 22 + p.m2 * 3.5;
         b2.vx = p.v2;
-        b2.x = canvas.width - 120;
+        b2.x = 520;
 
         restitution = p.e;
         running = true;
@@ -1370,17 +1324,13 @@
     function update(dt) {
         if (!running) return;
 
-        b1.x += b1.vx * dt * 40;
-        b2.x += b2.vx * dt * 40;
+        b1.x += b1.vx * dt * 45;
+        b2.x += b2.vx * dt * 45;
 
-        // Va chạm giữa 2 quả cầu
         const dist = Math.abs(b2.x - b1.x);
         const minDist = b1.r + b2.r;
 
         if (dist <= minDist && (b1.vx - b2.vx) > 0) {
-            // Công thức va chạm tổng quát với hệ số hồi phục e:
-            // v1' = [m1*v1 + m2*v2 - m2*e*(v1 - v2)] / (m1 + m2)
-            // v2' = [m1*v1 + m2*v2 + m1*e*(v1 - v2)] / (m1 + m2)
             const m1 = b1.m, m2 = b2.m;
             const u1 = b1.vx, u2 = b2.vx;
             const e = restitution;
@@ -1391,17 +1341,14 @@
             b1.vx = v1Prime;
             b2.vx = v2Prime;
 
-            // Chống dính
             const overlap = minDist - dist;
             b1.x -= overlap / 2;
             b2.x += overlap / 2;
         }
 
-        // Va chạm đàn hồi với 2 thành biên
-        if (b1.x - b1.r < 20) { b1.x = 20 + b1.r; b1.vx = -b1.vx; }
-        if (b2.x + b2.r > canvas.width - 20) { b2.x = canvas.width - 20 - b2.r; b2.vx = -b2.vx; }
+        if (b1.x - b1.r < 50) { b1.x = 50 + b1.r; b1.vx = -b1.vx; }
+        if (b2.x + b2.r > 650) { b2.x = 650 - b2.r; b2.vx = -b2.vx; }
 
-        // Tính động lượng & động năng
         const p1 = b1.m * b1.vx;
         const p2 = b2.m * b2.vx;
         const pTotal = p1 + p2;
@@ -1422,75 +1369,87 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
 
-        // Băng truyền / sàn không ma sát
-        const trackY = 220;
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(15, trackY + 35, canvas.width - 30, 20);
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(15, trackY + 35, canvas.width - 30, 20);
+        PhET.drawLabBackground(ctx, 700, 460, 'PHÒNG THÍ NGHIỆM VA CHẠM & BẢO TOÀN ĐỘNG LƯỢNG');
 
-        // Hai bức tường biên
+        const trackY = 250;
+
+        // 1. Đệm không khí (Air Track Rail)
+        PhET.drawRuler(ctx, 45, trackY + 30, 610, false, 'cm', 'cm');
+
+        // Băng ray kim loại dẫn hướng
         ctx.fillStyle = '#334155';
-        ctx.fillRect(0, trackY - 60, 20, 115);
-        ctx.fillRect(canvas.width - 20, trackY - 60, 20, 115);
-
-        // Quả bóng 1
-        ctx.beginPath();
-        ctx.arc(b1.x, trackY + 35 - b1.r, b1.r, 0, Math.PI * 2);
-        ctx.fillStyle = b1.color;
-        ctx.fill();
-        ctx.strokeStyle = '#ffffff';
+        ctx.fillRect(40, trackY, 620, 24);
+        ctx.strokeStyle = '#94a3b8';
         ctx.lineWidth = 2;
-        ctx.stroke();
+        ctx.strokeRect(40, trackY, 620, 24);
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(`m₁=${b1.m}kg`, b1.x, trackY + 35 - b1.r + 4);
+        // Hai đệm cản hai đầu
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(35, trackY - 20, 15, 50);
+        ctx.fillRect(650, trackY - 20, 15, 50);
 
-        // Quả bóng 2
-        ctx.beginPath();
-        ctx.arc(b2.x, trackY + 35 - b2.r, b2.r, 0, Math.PI * 2);
-        ctx.fillStyle = b2.color;
-        ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        // 2. Xe trượt 1 (Cart 1 - Xanh cyan)
+        drawCart(ctx, b1.x, trackY, b1.m, b1.vx, '#0284c7', '#38bdf8', 'Xe 1');
 
-        ctx.fillText(`m₂=${b2.m}kg`, b2.x, trackY + 35 - b2.r + 4);
+        // 3. Xe trượt 2 (Cart 2 - Cam vàng)
+        drawCart(ctx, b2.x, trackY, b2.m, b2.vx, '#b45309', '#f59e0b', 'Xe 2');
 
-        // Vector vận tốc v1 và v2
-        drawVector(ctx, b1.x, trackY + 35 - b1.r - b1.r - 10, b1.vx * 8, '#38bdf8', `v₁ = ${b1.vx.toFixed(1)}`);
-        drawVector(ctx, b2.x, trackY + 35 - b2.r - b2.r - 10, b2.vx * 8, '#f59e0b', `v₂ = ${b2.vx.toFixed(1)}`);
+        // 4. Biểu đồ thanh năng lượng & động lượng phía trên
+        const p1 = b1.m * b1.vx;
+        const p2 = b2.m * b2.vx;
+        const pTot = p1 + p2;
+        const keTot = 0.5 * b1.m * b1.vx * b1.vx + 0.5 * b2.m * b2.vx * b2.vx;
+
+        PhET.drawHUD(ctx, 470, 310, '📊 ĐỊNH LUẬT BẢO TOÀN', [
+            { label: 'Động lượng p_tổng', val: `${pTot.toFixed(2)} kg·m/s`, color: '#38bdf8' },
+            { label: 'Động năng K_tổng', val: `${keTot.toFixed(2)} J`, color: '#4ade80' }
+        ], 195);
+
+        ctx.restore();
     }
 
-    function drawVector(ctx, x, y, dx, color, label) {
-        if (Math.abs(dx) < 1) return;
-        const headlen = 6;
-        const sign = Math.sign(dx);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
+    function drawCart(ctx, x, trackY, m, v, colDark, colLight, label) {
+        const cartW = 60 + m * 8;
+        const cartH = 34;
+        const cy = trackY - cartH;
+
+        // Thân xe kim loại 3D
+        const cGrad = ctx.createLinearGradient(x - cartW/2, cy, x + cartW/2, cy);
+        cGrad.addColorStop(0, colDark);
+        cGrad.addColorStop(0.5, colLight);
+        cGrad.addColorStop(1, colDark);
+        ctx.fillStyle = cGrad;
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + dx, y);
+        ctx.roundRect(x - cartW/2, cy, cartW, cartH, 4);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        ctx.fillStyle = color;
+        // Đệm cao su giảm chấn 2 đầu xe (Bumpers)
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(x - cartW/2 - 6, cy + 8, 6, cartH - 16);
+        ctx.fillRect(x + cartW/2, cy + 8, 6, cartH - 16);
+
+        // Bánh xe trượt
+        ctx.fillStyle = '#0f172a';
         ctx.beginPath();
-        ctx.moveTo(x + dx, y);
-        ctx.lineTo(x + dx - sign * headlen, y - 4);
-        ctx.lineTo(x + dx - sign * headlen, y + 4);
+        ctx.arc(x - cartW/3, trackY, 5, 0, Math.PI * 2);
+        ctx.arc(x + cartW/3, trackY, 5, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(label, x + dx / 2, y - 8);
+        // Nhãn khối lượng
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${m.toFixed(1)}kg`, x, cy + cartH/2 + 4);
+
+        // Vector vận tốc v
+        PhET.drawVector(ctx, x, cy - 8, v * 14, 0, '#22c55e', `v=${v.toFixed(1)}`, 2.5);
     }
 
     let lastTime = performance.now();
@@ -1516,20 +1475,19 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 5. BẢO TOÀN CƠ NĂNG - ĐƯỜNG TRƯỢT SKATE PARK (Energy Conservation)
+// 5. BẢO TOÀN CƠ NĂNG - SKATE PARK (PhET Energy Skate Park)
 // ─────────────────────────────────────────────────────────────
 (function initEnergySkate() {
     const canvas = document.getElementById('energySkateCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // Đường trượt hình chữ U dạng parabol: y(x) = A*(x - x0)^2 + y0
-    const x0 = canvas.width / 2;
-    const y0 = 360; // Đáy lòng máng
-    const kCurve = 0.0022; // Độ uốn cong của máng
+    const x0 = 350;
+    const y0 = 360;
+    const kCurve = 0.0022;
 
-    let sX = x0 - 150; // Vị trí x của người trượt
-    let vS = 0; // Vận tốc tiếp tuyến dọc đường trượt
+    let sX = x0 - 160;
+    let vS = 0;
     let paused = false;
     let thermalEnergy = 0;
 
@@ -1556,11 +1514,10 @@
     }
 
     function getY(x) {
-        return y0 - kCurve * Math.pow(x - x0, 2) * -1; // Đỉnh ở trên, lòng máng ở dưới
+        return y0 - kCurve * Math.pow(x - x0, 2) * -1;
     }
 
     function getSlopeAngle(x) {
-        // dy/dx = 2 * kCurve * (x - x0)
         const slope = 2 * kCurve * (x - x0);
         return Math.atan(slope);
     }
@@ -1570,18 +1527,14 @@
         const p = getParams();
 
         const angle = getSlopeAngle(sX);
-        // Gia tốc dọc theo tiếp tuyến mặt trượt: a = -g * sin(angle) - friction * v
-        const aTangent = -p.g * Math.sin(angle) * 30 - p.friction * 40 * vS;
+        const aTangent = -p.g * Math.sin(angle) * 32 - p.friction * 40 * vS;
 
         vS += aTangent * dt;
         sX += vS * Math.cos(angle) * dt * 8;
 
-        // Giới hạn biên máng trượt
         if (sX < 80) { sX = 80; vS = -vS * 0.9; }
-        if (sX > canvas.width - 80) { sX = canvas.width - 80; vS = -vS * 0.9; }
+        if (sX > 620) { sX = 620; vS = -vS * 0.9; }
 
-        // Tính năng lượng:
-        // Đáy máng y0 là mốc thế năng 0
         const curY = getY(sX);
         const heightMeters = Math.max(0, (y0 - curY) / 30);
         const speedReal = Math.abs(vS) / 8;
@@ -1608,35 +1561,37 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'ĐƯỜNG TRƯỢT SKATE PARK & BẢO TOÀN CƠ NĂNG');
+
         const p = getParams();
 
-        // 1. Vẽ đường cong máng trượt
+        // 1. Đường cong máng trượt parabol bằng thép ống (U-Shaped Skate Track)
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 6;
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
         ctx.beginPath();
-        for (let x = 60; x <= canvas.width - 60; x += 5) {
+        for (let x = 60; x <= 640; x += 4) {
             const y = getY(x);
             if (x === 60) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         }
         ctx.stroke();
 
-        // Chân đế đường trượt
+        // Các cột giàn giáo đỡ máng
         ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
         ctx.lineWidth = 2;
-        for (let x = 100; x <= canvas.width - 100; x += 40) {
+        for (let x = 100; x <= 600; x += 45) {
             ctx.beginPath();
             ctx.moveTo(x, getY(x));
-            ctx.lineTo(x, canvas.height - 20);
+            ctx.lineTo(x, 420);
             ctx.stroke();
         }
 
-        // 2. Vị trí người trượt ván
+        // 2. Vận động viên trượt ván
         const curY = getY(sX);
         const angle = getSlopeAngle(sX);
 
@@ -1646,80 +1601,88 @@
 
         // Ván trượt
         ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(-20, -5, 40, 6);
-        ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.arc(-14, 3, 3, 0, Math.PI * 2);
-        ctx.arc(14, 3, 3, 0, Math.PI * 2);
+        ctx.roundRect(-24, -6, 48, 7, 3);
         ctx.fill();
 
-        // Người trượt (hình nộm cơ bản)
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3;
+        ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.moveTo(0, -5);
-        ctx.lineTo(0, -28); // Thân
-        ctx.lineTo(-8, -15); // Chân sau
-        ctx.moveTo(0, -28);
-        ctx.lineTo(8, -15); // Chân trước
-        ctx.moveTo(0, -22);
-        ctx.lineTo(-12, -26); // Tay trái
-        ctx.moveTo(0, -22);
-        ctx.lineTo(12, -26); // Tay phải
-        ctx.stroke();
+        ctx.arc(-16, 3, 4, 0, Math.PI * 2);
+        ctx.arc(16, 3, 4, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Đầu
+        // Người trượt (PhET Skater Mascot)
         ctx.fillStyle = '#38bdf8';
         ctx.beginPath();
-        ctx.arc(0, -34, 6, 0, Math.PI * 2);
+        ctx.roundRect(-10, -32, 20, 26, 4);
+        ctx.fill();
+
+        // Đầu người trượt có mũ bảo hiểm
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.arc(0, -42, 9, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();
 
-        // 3. Thanh năng lượng động (Energy Bar Chart) ở góc phải
-        drawEnergyBars(ctx);
-    }
+        // 3. BIỂU ĐỒ TRÒN NĂNG LƯỢNG NỔI TRÊN ĐẦU NGƯỜI TRƯỢT (PhET Floating Pie Chart!)
+        const heightMeters = Math.max(0, (y0 - curY) / 30);
+        const speedReal = Math.abs(vS) / 8;
+        const Ep = p.m * p.g * heightMeters;
+        const Ek = 0.5 * p.m * speedReal * speedReal;
+        const Etot = Ep + Ek + thermalEnergy;
 
-    function drawEnergyBars(ctx) {
-        const epEl = document.getElementById('skate-ep');
-        const ekEl = document.getElementById('skate-ek');
-        const ethEl = document.getElementById('skate-eth');
+        if (Etot > 0) {
+            const pieR = 24;
+            const pieX = sX;
+            const pieY = curY - 70;
 
-        const ep = epEl ? parseFloat(epEl.textContent) : 0;
-        const ek = ekEl ? parseFloat(ekEl.textContent) : 0;
-        const eth = ethEl ? parseFloat(ethEl.textContent) : 0;
-        const maxE = Math.max(ep + ek + eth, 100);
+            const fEk = (Ek / Etot) * Math.PI * 2;
+            const fEp = (Ep / Etot) * Math.PI * 2;
+            const fEth = (thermalEnergy / Etot) * Math.PI * 2;
 
-        const bx = canvas.width - 140;
-        const by = 40;
-        const barW = 20;
-        const barMaxH = 100;
+            // Động năng (Xanh lá)
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath();
+            ctx.moveTo(pieX, pieY);
+            ctx.arc(pieX, pieY, pieR, 0, fEk);
+            ctx.closePath();
+            ctx.fill();
 
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
-        ctx.fillRect(bx - 15, by - 15, 130, 140);
-        ctx.strokeStyle = '#475569';
-        ctx.strokeRect(bx - 15, by - 15, 130, 140);
+            // Thế năng (Xanh cyan)
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.moveTo(pieX, pieY);
+            ctx.arc(pieX, pieY, pieR, fEk, fEk + fEp);
+            ctx.closePath();
+            ctx.fill();
 
-        // Ek (Động năng - Xanh lá)
-        const hEk = (ek / maxE) * barMaxH;
-        ctx.fillStyle = '#22c55e';
-        ctx.fillRect(bx, by + barMaxH - hEk, barW, hEk);
+            // Nhiệt (Đỏ)
+            if (fEth > 0) {
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.moveTo(pieX, pieY);
+                ctx.arc(pieX, pieY, pieR, fEk + fEp, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
 
-        // Ep (Thế năng - Xanh dương)
-        const hEp = (ep / maxE) * barMaxH;
-        ctx.fillStyle = '#0284c7';
-        ctx.fillRect(bx + 30, by + barMaxH - hEp, barW, hEp);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(pieX, pieY, pieR, 0, Math.PI * 2);
+            ctx.stroke();
+        }
 
-        // Ethermal (Nhiệt - Đỏ)
-        const hEth = (eth / maxE) * barMaxH;
-        ctx.fillStyle = '#ef4444';
-        ctx.fillRect(bx + 60, by + barMaxH - hEth, barW, hEth);
+        // 4. Biểu đồ thanh năng lượng khoa học góc phải (Energy Bar Chart)
+        PhET.drawEnergyBars(ctx, 480, 45, 195, 160, [
+            { label: 'Động năng', shortLabel: 'Đ.Năng', val: Ek, color: '#22c55e' },
+            { label: 'Thế năng', shortLabel: 'Thế.Năng', val: Ep, color: '#38bdf8' },
+            { label: 'Nhiệt', shortLabel: 'Nhiệt', val: thermalEnergy, color: '#ef4444' },
+            { label: 'Cơ năng', shortLabel: 'Cơ.Năng', val: Etot, color: '#f59e0b' }
+        ]);
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '10px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText('Động năng', bx - 5, by + barMaxH + 15);
-        ctx.fillText('Thế năng', bx + 28, by + barMaxH + 15);
-        ctx.fillText('Nhiệt', bx + 62, by + barMaxH + 15);
+        ctx.restore();
     }
 
     let lastTime = performance.now();
@@ -1740,7 +1703,7 @@
     const resetBtn = document.getElementById('skate-reset');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            sX = x0 - 150;
+            sX = x0 - 160;
             vS = 0;
             thermalEnergy = 0;
         });
@@ -1750,18 +1713,13 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 6. CÂN BẰNG VẬT RẮN VÀ MOMEN LỰC - ĐÒN BẨY (Balancing Act & Torque)
+// 6. CÂN BẰNG VẬT RẮN & ĐÒN BẨY (PhET Balancing Act)
 // ─────────────────────────────────────────────────────────────
 (function initBalancingAct() {
     const canvas = document.getElementById('balancingActCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // Thanh bập bênh: chiều dài 500 px, các khấc cách nhau 25px (-10 đến +10)
-    let weights = [
-        { mass: 5, pos: -6 }, // 5kg ở khấc -6 (bên trái)
-        { mass: 10, pos: 3 }  // 10kg ở khấc +3 (bên phải) => 5*6 = 30 = 10*3 => CÂN BẰNG!
-    ];
     let tiltAngle = 0;
     let targetAngle = 0;
     let locked = false;
@@ -1794,13 +1752,6 @@
 
     function update() {
         const p = getParams();
-        weights = [
-            { mass: p.m1, pos: -p.d1 },
-            { mass: p.m2, pos: p.d2 }
-        ];
-
-        // Momen quay ngược chiều kim đồng hồ: M1 = m1 * d1
-        // Momen quay thuận chiều kim đồng hồ: M2 = m2 * d2
         const torqueCCW = p.m1 * p.d1 * 9.8;
         const torqueCW = p.m2 * p.d2 * 9.8;
         const netTorque = torqueCW - torqueCCW;
@@ -1809,14 +1760,13 @@
             targetAngle = 0;
         } else {
             if (Math.abs(netTorque) < 0.1) {
-                targetAngle = 0; // Cân bằng
+                targetAngle = 0;
             } else {
-                targetAngle = Math.sign(netTorque) * 0.22; // Nghiêng sang bên nặng hơn
+                targetAngle = Math.sign(netTorque) * 0.20;
             }
         }
 
-        // Chuyển động xoay mượt mà
-        tiltAngle += (targetAngle - tiltAngle) * 0.1;
+        tiltAngle += (targetAngle - tiltAngle) * 0.12;
 
         const tccwEl = document.getElementById('lever-t-ccw');
         const tcwEl = document.getElementById('lever-t-cw');
@@ -1828,7 +1778,7 @@
         if (tnetEl) tnetEl.textContent = Math.abs(netTorque).toFixed(1) + ' N·m';
         if (stEl) {
             if (Math.abs(netTorque) < 0.1) {
-                stEl.textContent = '⚖️ Cân Bằng Tuyệt Đối (Σ M = 0)';
+                stEl.textContent = '⚖️ Cân Bằng Hoàn Hảo (Σ M = 0)';
                 stEl.style.color = '#10b981';
             } else if (netTorque > 0) {
                 stEl.textContent = '➡️ Nghiêng sang Phải (M₂ > M₁)';
@@ -1842,79 +1792,113 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const cx = canvas.width / 2;
-        const cy = 250;
-        const beamLen = 460;
-        const stepPx = 20;
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
 
-        // 1. Trụ đỡ tam giác (Fulcrum)
+        PhET.drawLabBackground(ctx, 700, 460, 'CÂN BẰNG VẬT RẮN & QUY TẮC MOMEN LỰC');
+
+        const p = getParams();
+        const cx = 350;
+        const cy = 260;
+        const beamLen = 500;
+        const stepPx = 22;
+
+        // 1. Trụ đỡ tam giác Fulcrum bằng thép đúc
         ctx.fillStyle = '#475569';
         ctx.beginPath();
         ctx.moveTo(cx, cy);
-        ctx.lineTo(cx - 30, cy + 60);
-        ctx.lineTo(cx + 30, cy + 60);
+        ctx.lineTo(cx - 35, cy + 85);
+        ctx.lineTo(cx + 35, cy + 85);
         ctx.closePath();
         ctx.fill();
         ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
-        // 2. Chốt khóa an toàn (nếu có)
+        // 2. Chốt khóa an toàn
         if (locked) {
             ctx.fillStyle = '#ef4444';
-            ctx.fillRect(cx - 150, cy + 30, 20, 30);
-            ctx.fillRect(cx + 130, cy + 30, 20, 30);
+            ctx.fillRect(cx - 160, cy + 40, 24, 45);
+            ctx.fillRect(cx + 136, cy + 40, 24, 45);
         }
 
-        // 3. Vẽ thanh đòn bẩy xoay theo góc tiltAngle
+        // 3. Thanh bập bênh xoay
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(tiltAngle);
 
-        // Thân thanh đòn
-        ctx.fillStyle = '#0284c7';
-        ctx.fillRect(-beamLen / 2, -8, beamLen, 16);
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(-beamLen / 2, -8, beamLen, 16);
+        // Thân thanh gỗ/kim loại bập bênh
+        const bGrad = ctx.createLinearGradient(0, -10, 0, 10);
+        bGrad.addColorStop(0, '#fef08a');
+        bGrad.addColorStop(0.5, '#facc15');
+        bGrad.addColorStop(1, '#ca8a04');
+        ctx.fillStyle = bGrad;
+        ctx.beginPath();
+        ctx.roundRect(-beamLen / 2, -10, beamLen, 20, 4);
+        ctx.fill();
+        ctx.strokeStyle = '#a16207';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
-        // Vạch chia khoảng cách trên thanh
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '10px "Space Grotesk", -apple-system, sans-serif';
+        // Các vạch chia khoảng cách mét
+        ctx.fillStyle = '#713f12';
+        ctx.font = 'bold 10px monospace';
         ctx.textAlign = 'center';
         for (let i = -10; i <= 10; i++) {
             const vx = i * stepPx;
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = i === 0 ? 2 : 1;
             ctx.beginPath();
-            ctx.moveTo(vx, -8);
-            ctx.lineTo(vx, 8);
+            ctx.moveTo(vx, -10);
+            ctx.lineTo(vx, i === 0 ? 10 : 2);
             ctx.stroke();
 
-            if (i !== 0 && i % 2 === 0) {
-                ctx.fillText(Math.abs(i), vx, 22);
+            if (i !== 0 && Math.abs(i) % 2 === 0) {
+                ctx.fillText(Math.abs(i).toString(), vx, 20);
             }
         }
 
-        // 4. Vẽ các quả nặng trên thanh
-        weights.forEach((w, idx) => {
-            const wx = w.pos * stepPx;
-            const wSize = 20 + w.mass * 1.5;
-            ctx.fillStyle = idx === 0 ? '#38bdf8' : '#f59e0b';
-            ctx.fillRect(wx - wSize / 2, -8 - wSize, wSize, wSize);
+        // Bọt thủy chuẩn cân bằng (Spirit Level) ở giữa
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.roundRect(-25, -22, 50, 10, 4);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-tiltAngle * 100, -17, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4. Các quả tạ chuẩn PhET đặt trên thanh
+        function drawWeight(wx, mass, colGradStart, colGradEnd) {
+            const wSize = 22 + mass * 1.6;
+            const wGrad = ctx.createLinearGradient(wx - wSize/2, -10 - wSize, wx + wSize/2, -10);
+            wGrad.addColorStop(0, colGradStart);
+            wGrad.addColorStop(1, colGradEnd);
+            ctx.fillStyle = wGrad;
+            ctx.beginPath();
+            ctx.roundRect(wx - wSize / 2, -10 - wSize, wSize, wSize, 4);
+            ctx.fill();
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 1.5;
-            ctx.strokeRect(wx - wSize / 2, -8 - wSize, wSize, wSize);
+            ctx.stroke();
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 11px "Space Grotesk", -apple-system, sans-serif';
-            ctx.fillText(`${w.mass}kg`, wx, -8 - wSize / 2 + 4);
-        });
+            ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+            ctx.fillText(`${mass}kg`, wx, -10 - wSize / 2 + 4);
+        }
+
+        drawWeight(-p.d1 * stepPx, p.m1, '#0284c7', '#38bdf8');
+        drawWeight(p.d2 * stepPx, p.m2, '#b45309', '#f59e0b');
+
+        ctx.restore();
+
+        // Bảng HUD momen lực
+        const torqueCCW = p.m1 * p.d1 * 9.8;
+        const torqueCW = p.m2 * p.d2 * 9.8;
+        PhET.drawHUD(ctx, 470, 310, '📊 CÂN BẰNG MOMEN LỰC', [
+            { label: 'Momen trái M₁', val: `${torqueCCW.toFixed(1)} N·m`, color: '#38bdf8' },
+            { label: 'Momen phải M₂', val: `${torqueCW.toFixed(1)} N·m`, color: '#facc15' },
+            { label: 'Hợp momen |ΣM|', val: `${Math.abs(torqueCW - torqueCCW).toFixed(1)} N·m`, color: Math.abs(torqueCW - torqueCCW) < 0.1 ? '#4ade80' : '#ef4444' }
+        ], 200);
 
         ctx.restore();
     }
@@ -1943,24 +1927,23 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 7. CHUYỂN ĐỘNG QUAY VÀ MOMEN QUÁN TÍNH (Rotational Inertia)
+// 7. CHUYỂN ĐỘNG QUAY VÀ MOMEN QUÁN TÍNH (PhET Rotational Inertia)
 // ─────────────────────────────────────────────────────────────
 (function initRotationalInertia() {
     const canvas = document.getElementById('rotationalInertiaCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let angle = 0;
-    let omega = 3.0; // rad/s
-    let radius = 100; // Khoảng cách quả nặng tới trục quay (px)
+    let diskAngle = 0;
+    let omega = 4.0;
 
     function getParams() {
         const rEl = document.getElementById('rot-radius');
         const mEl = document.getElementById('rot-mass');
 
         return {
-            r: rEl ? parseFloat(rEl.value) : 100, // pixel
-            m: mEl ? parseFloat(mEl.value) : 5 // kg
+            R: rEl ? parseFloat(rEl.value) : 1.0,
+            M: mEl ? parseFloat(mEl.value) : 2.0
         };
     }
 
@@ -1968,28 +1951,12 @@
         const p = getParams();
         const rVal = document.getElementById('rot-radius-val');
         const mVal = document.getElementById('rot-mass-val');
-        if (rVal) rVal.textContent = (p.r / 50).toFixed(2) + ' m';
-        if (mVal) mVal.textContent = p.m.toFixed(1) + ' kg';
-    }
 
-    function update(dt) {
-        const p = getParams();
-        const newR = p.r;
+        if (rVal) rVal.textContent = p.R.toFixed(1) + ' m';
+        if (mVal) mVal.textContent = p.M.toFixed(1) + ' kg';
 
-        // Định luật bảo toàn mômen động lượng: L = I * omega = const
-        // I = m * r^2
-        // Khi thay đổi bán kính từ r_old sang r_new: omega_new = omega_old * (r_old / r_new)^2
-        if (Math.abs(newR - radius) > 0.5) {
-            const I_old = p.m * Math.pow(radius / 50, 2);
-            const I_new = p.m * Math.pow(newR / 50, 2);
-            omega = omega * (I_old / I_new);
-            radius = newR;
-        }
-
-        angle += omega * dt;
-
-        const realR = radius / 50;
-        const I = p.m * realR * realR;
+        // Đĩa tròn đồng chất: I = 1/2 * M * R^2
+        const I = 0.5 * p.M * p.R * p.R;
         const L = I * omega;
         const Erot = 0.5 * I * omega * omega;
 
@@ -1998,46 +1965,61 @@
         const lEl = document.getElementById('rot-angular-l');
         const eEl = document.getElementById('rot-energy');
 
-        if (iEl) iEl.textContent = I.toFixed(3) + ' kg·m²';
+        if (iEl) iEl.textContent = I.toFixed(2) + ' kg·m²';
         if (wEl) wEl.textContent = omega.toFixed(2) + ' rad/s';
-        if (lEl) lEl.textContent = L.toFixed(2) + ' J·s (const)';
-        if (eEl) eEl.textContent = Erot.toFixed(1) + ' J';
+        if (lEl) lEl.textContent = L.toFixed(2) + ' kg·m²/s';
+        if (eEl) eEl.textContent = Erot.toFixed(2) + ' J';
+    }
+
+    function update(dt) {
+        diskAngle += omega * dt;
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
 
-        // Trục quay ở tâm
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
-        ctx.fill();
+        PhET.drawLabBackground(ctx, 700, 460, 'MOMEN QUÁN TÍNH & ĐỘNG NĂNG QUAY (I = ½MR²)');
 
-        // Đĩa quay / thanh quay
+        const p = getParams();
+        const cx = 250;
+        const cy = 230;
+        const rPx = p.R * 110;
+
+        // 1. Đĩa quay 3D kim loại có vân xuyên tâm (Solid Disk)
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.rotate(angle);
 
-        // Thanh ngang đỡ 2 quả nặng
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 4;
+        // Vành ngoài đĩa
+        const dGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, rPx);
+        dGrad.addColorStop(0, '#0284c7');
+        dGrad.addColorStop(0.7, '#38bdf8');
+        dGrad.addColorStop(1, '#0c4a6e');
+        ctx.fillStyle = dGrad;
         ctx.beginPath();
-        ctx.moveTo(-radius, 0);
-        ctx.lineTo(radius, 0);
+        ctx.arc(0, 0, rPx, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
         ctx.stroke();
 
-        // 2 Quả nặng di động
-        ctx.fillStyle = '#38bdf8';
+        // Các nan hoa quay hiển thị góc xoay
+        ctx.rotate(diskAngle);
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 2;
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(rPx * Math.cos(a), rPx * Math.sin(a));
+            ctx.stroke();
+        }
+
+        // Trục quay trung tâm
+        ctx.fillStyle = '#f59e0b';
         ctx.beginPath();
-        ctx.arc(-radius, 0, 16, 0, Math.PI * 2);
-        ctx.arc(radius, 0, 16, 0, Math.PI * 2);
+        ctx.arc(0, 0, 12, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
@@ -2045,20 +2027,19 @@
 
         ctx.restore();
 
-        // Vòng tròn đường chạy của 2 quả nặng
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        // 2. Bảng so sánh Momen quán tính các hình dạng chuẩn
+        const I_disk = 0.5 * p.M * p.R * p.R;
+        const I_ring = p.M * p.R * p.R;
+        const I_sphere = 0.4 * p.M * p.R * p.R;
 
-        // Chú thích
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('💡 Thu hẹp bán kính r → Momen quán tính I giảm → Tốc độ quay ω tăng vọt!', cx, canvas.height - 25);
+        PhET.drawHUD(ctx, 440, 70, '📊 MOMEN QUÁN TÍNH CÁC VẬT', [
+            { label: 'Đĩa tròn đặc (½MR²)', val: `${I_disk.toFixed(2)} kg·m²`, color: '#38bdf8' },
+            { label: 'Vành tròn rỗng (MR²)', val: `${I_ring.toFixed(2)} kg·m²`, color: '#ef4444' },
+            { label: 'Quả cầu đặc (⅖MR²)', val: `${I_sphere.toFixed(2)} kg·m²`, color: '#4ade80' },
+            { label: 'Động năng quay W_đ', val: `${(0.5 * I_disk * omega * omega).toFixed(1)} J`, color: '#facc15' }
+        ], 230);
+
+        ctx.restore();
     }
 
     let lastTime = performance.now();
@@ -2078,4 +2059,3 @@
 
     syncLabels();
 })();
-

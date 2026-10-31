@@ -1,6 +1,6 @@
 /* ============================================================
-   ⚛️ LP.VirtualLab - CHUYÊN ĐỀ 7: VẬT LÝ HIỆN ĐẠI (Modern Physics)
-   Bao gồm 3 bài mô phỏng chuẩn mực:
+   ⚛️ LP.VirtualLab - CHUYÊN ĐỀ 7: VẬT LÝ HIỆN ĐẠI (Modern Physics PhET)
+   Bao gồm 3 bài mô phỏng chuẩn mực PhET siêu trực quan:
    25. Hiệu ứng quang điện ngoài (Einstein's Photoelectric Effect)
    26. Bức xạ vật đen & Định luật Wien, Stefan-Boltzmann (Blackbody Radiation)
    27. Mô hình nguyên tử Bohr & Tán xạ hạt Alpha Rutherford (Bohr & Rutherford)
@@ -8,7 +8,7 @@
    ============================================================ */
 
 // ─────────────────────────────────────────────────────────────
-// 25. HIỆU ỨNG QUANG ĐIỆN NGOÀI (Photoelectric Effect)
+// 25. HIỆU ỨNG QUANG ĐIỆN NGOÀI (Photoelectric Effect PhET)
 // ─────────────────────────────────────────────────────────────
 (function initPhotoelectric() {
     const canvas = document.getElementById('photoelectricCanvas');
@@ -37,9 +37,9 @@
         return {
             metalKey,
             workFunc,
-            lambdaNm: lambdaEl ? parseFloat(lambdaEl.value) : 400, // nm
-            intensity: intensityEl ? parseFloat(intensityEl.value) : 80, // %
-            voltage: voltEl ? parseFloat(voltEl.value) : 0 // Volt (ngược chiều là điện áp hãm)
+            lambdaNm: lambdaEl ? parseFloat(lambdaEl.value) : 400,
+            intensity: intensityEl ? parseFloat(intensityEl.value) : 80,
+            voltage: voltEl ? parseFloat(voltEl.value) : 0
         };
     }
 
@@ -53,16 +53,11 @@
         if (iVal) iVal.textContent = p.intensity.toFixed(0) + ' %';
         if (vVal) vVal.textContent = p.voltage.toFixed(2) + ' V';
 
-        // Năng lượng photon: E = hc / lambda
-        // hc = 1240 eV * nm
         const photonEnergy = 1240 / p.lambdaNm; // eV
-        // Giới hạn quang điện: lambda_0 = hc / A
-        const lambda0 = 1240 / p.workFunc; // nm
-
-        // Động năng cực đại: K_max = E - A (nếu E > A)
+        const lambda0 = 1240 / p.workFunc;     // nm
         const canEject = photonEnergy >= p.workFunc;
         const kMax = canEject ? (photonEnergy - p.workFunc) : 0;
-        const vStop = kMax; // Điện áp hãm Uh = K_max / e (Volt)
+        const vStop = kMax;
 
         const eEl = document.getElementById('pe-photon-e');
         const aEl = document.getElementById('pe-work-func');
@@ -92,14 +87,14 @@
     }
 
     function nmToColor(nm) {
-        if (nm < 380) return '#a855f7'; // Tử ngoại UV
+        if (nm < 380) return '#c084fc';
         if (nm >= 380 && nm < 440) return '#6366f1';
         if (nm >= 440 && nm < 490) return '#38bdf8';
         if (nm >= 490 && nm < 560) return '#22c55e';
         if (nm >= 560 && nm < 590) return '#eab308';
         if (nm >= 590 && nm < 630) return '#f97316';
         if (nm >= 630 && nm <= 750) return '#ef4444';
-        return '#dc2626'; // Hồng ngoại
+        return '#dc2626';
     }
 
     function update(dt) {
@@ -109,19 +104,18 @@
         const kMax = canEject ? (photonEnergy - p.workFunc) : 0;
 
         // Sinh electron từ Catot
-        if (canEject && Math.random() < (p.intensity / 100) * 0.4) {
-            const v0 = Math.sqrt(kMax) * 45;
+        if (canEject && Math.random() < (p.intensity / 100) * 0.45) {
+            const v0 = Math.sqrt(kMax) * 55;
             electrons.push({
-                x: 180,
+                x: 185,
                 y: 110 + Math.random() * 140,
                 vx: v0 * (0.6 + 0.4 * Math.random()),
-                vy: (Math.random() - 0.5) * 15
+                vy: (Math.random() - 0.5) * 20
             });
         }
 
-        // Cập nhật vị trí electron dưới điện trường gia tốc/hãm U
-        const anodeX = canvas.width - 180;
-        const accX = (p.voltage / 0.2) * 8; // Gia tốc điện trường
+        const anodeX = 520;
+        const accX = (p.voltage / 0.15) * 8.5;
 
         for (let i = electrons.length - 1; i >= 0; i--) {
             const el = electrons[i];
@@ -129,8 +123,7 @@
             el.x += el.vx * dt * 4;
             el.y += el.vy * dt * 4;
 
-            // Chạm anốt hoặc quay đầu về catôt do điện trường hãm
-            if (el.x >= anodeX || el.x < 175 || el.y < 80 || el.y > 280) {
+            if (el.x >= anodeX || el.x < 180 || el.y < 80 || el.y > 280) {
                 electrons.splice(i, 1);
             }
         }
@@ -138,89 +131,173 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'HIỆN TƯỢNG QUANG ĐIỆN NGOÀI & THUYẾT LƯỢNG TỬ');
+
         const p = getParams();
-
         const lightColor = nmToColor(p.lambdaNm);
-        const cathodeX = 170;
-        const anodeX = canvas.width - 170;
+        const tubeCX = 350;
+        const tubeCY = 180;
+        const cathodeX = 180;
+        const anodeX = 520;
 
-        // 1. Bình chân không bóng thủy tinh
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
-        ctx.lineWidth = 3;
+        // 1. Bình tế bào quang điện chân không bằng thủy tinh 3D PhET (Phototube)
+        ctx.save();
+        // Ánh sáng chân không mờ bên trong
+        const tubeInner = ctx.createRadialGradient(tubeCX, tubeCY, 40, tubeCX, tubeCY, 190);
+        tubeInner.addColorStop(0, 'rgba(56, 189, 248, 0.08)');
+        tubeInner.addColorStop(1, 'rgba(15, 23, 42, 0.4)');
+        ctx.fillStyle = tubeInner;
         ctx.beginPath();
-        ctx.ellipse(canvas.width / 2, 180, 220, 120, 0, 0, Math.PI * 2);
+        ctx.roundRect(tubeCX - 190, tubeCY - 95, 380, 190, 85);
+        ctx.fill();
+
+        // Vỏ thủy tinh trong suốt phản quang
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
-        // 2. Catot (Bản kim loại chiếu sáng)
-        ctx.fillStyle = '#475569';
-        ctx.fillRect(cathodeX, 100, 14, 160);
-        ctx.strokeStyle = '#ffffff';
+        // Vết phản xạ thủy tinh (Glass glare)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
         ctx.lineWidth = 1.5;
-        ctx.strokeRect(cathodeX, 100, 14, 160);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(`Catôt (${p.metalKey})`, cathodeX - 35, 185);
-
-        // 3. Anot (Bản thu electron)
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(anodeX, 100, 14, 160);
-        ctx.strokeRect(anodeX, 100, 14, 160);
-        ctx.fillText('Anôt', anodeX + 35, 185);
-
-        // 4. Chùm ánh sáng photon chiếu vào catôt
-        ctx.strokeStyle = lightColor;
-        ctx.lineWidth = Math.max(2, (p.intensity / 100) * 8);
         ctx.beginPath();
-        ctx.moveTo(40, 60);
-        ctx.lineTo(cathodeX, 180);
+        ctx.arc(tubeCX - 90, tubeCY - 50, 45, Math.PI * 1.1, Math.PI * 1.6);
         ctx.stroke();
+        ctx.restore();
+
+        // 2. Tấm kim loại Catôt bên trái (Cathode Target)
+        const catGrad = ctx.createLinearGradient(cathodeX, 0, cathodeX + 16, 0);
+        catGrad.addColorStop(0, '#94a3b8');
+        catGrad.addColorStop(0.5, '#cbd5e1');
+        catGrad.addColorStop(1, '#475569');
+        ctx.fillStyle = catGrad;
+        ctx.beginPath();
+        ctx.roundRect(cathodeX, tubeCY - 70, 16, 140, 3);
+        ctx.fill();
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Catôt (${p.metalKey})`, cathodeX - 35, tubeCY);
+
+        // 3. Tấm thu điện tích Anôt bên phải (Anode Collector)
+        const anGrad = ctx.createLinearGradient(anodeX, 0, anodeX + 16, 0);
+        anGrad.addColorStop(0, '#64748b');
+        anGrad.addColorStop(0.5, '#94a3b8');
+        anGrad.addColorStop(1, '#334155');
+        ctx.fillStyle = anGrad;
+        ctx.beginPath();
+        ctx.roundRect(anodeX, tubeCY - 70, 16, 140, 3);
+        ctx.fill();
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText('Anôt (+/-)', anodeX + 45, tubeCY);
+
+        // 4. Đèn rọi chùm photon đơn sắc (Monochromatic Light Source)
+        const lampX = 65;
+        const lampY = 65;
+        ctx.save();
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.roundRect(lampX - 35, lampY - 20, 50, 40, 5);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Loa đèn chiếu
+        ctx.fillStyle = lightColor;
+        ctx.beginPath();
+        ctx.moveTo(lampX + 15, lampY - 14);
+        ctx.lineTo(lampX + 30, lampY - 25);
+        ctx.lineTo(lampX + 30, lampY + 25);
+        ctx.lineTo(lampX + 15, lampY + 14);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        // Chùm tia photon phát sáng chiếu tới catot
+        const beamGrad = ctx.createLinearGradient(lampX + 30, lampY, cathodeX, tubeCY);
+        beamGrad.addColorStop(0, lightColor);
+        beamGrad.addColorStop(1, lightColor + '66');
+        ctx.strokeStyle = beamGrad;
+        ctx.lineWidth = Math.max(3, (p.intensity / 100) * 12);
+        ctx.shadowColor = lightColor;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(lampX + 30, lampY);
+        ctx.lineTo(cathodeX + 8, tubeCY - 15);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
 
         ctx.fillStyle = lightColor;
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-        ctx.fillText(`Photon hf (λ = ${p.lambdaNm}nm)`, 80, 60);
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Photon hf (λ = ${p.lambdaNm}nm)`, lampX + 45, lampY - 8);
 
-        // 5. Các electron đang bay
+        // 5. Các electron đang bay phát sáng (Photoelectrons)
         electrons.forEach(el => {
             ctx.fillStyle = '#38bdf8';
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 6;
             ctx.beginPath();
-            ctx.arc(el.x, el.y, 3.5, 0, Math.PI * 2);
+            ctx.arc(el.x, el.y, 4, 0, Math.PI * 2);
             ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Ký hiệu điện tích âm e-
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 8px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('-', el.x, el.y + 2.5);
         });
 
-        // 6. Mạch ngoài nối nguồn điện áp điều chỉnh U
-        drawCircuitVolt(ctx, cathodeX, anodeX, p.voltage);
-    }
-
-    function drawCircuitVolt(ctx, cx, ax, volt) {
-        ctx.strokeStyle = '#64748b';
-        ctx.lineWidth = 2;
+        // 6. Mạch điện bên ngoài với Vôn kế điện tử & Nguồn U
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2.5;
         ctx.beginPath();
-        ctx.moveTo(cx, 260);
-        ctx.lineTo(cx, 320);
-        ctx.lineTo(canvas.width / 2 - 30, 320);
+        ctx.moveTo(cathodeX + 8, tubeCY + 70);
+        ctx.lineTo(cathodeX + 8, 350);
+        ctx.lineTo(290, 350);
 
-        ctx.moveTo(ax, 260);
-        ctx.lineTo(ax, 320);
-        ctx.lineTo(canvas.width / 2 + 30, 320);
+        ctx.moveTo(anodeX + 8, tubeCY + 70);
+        ctx.lineTo(anodeX + 8, 350);
+        ctx.lineTo(410, 350);
         ctx.stroke();
 
-        // Đồng hồ đo điện áp
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(canvas.width / 2 - 35, 305, 70, 30);
+        // Đồng hồ Vôn kế điện tử LCD
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.roundRect(290, 330, 120, 42, 6);
+        ctx.fill();
         ctx.strokeStyle = '#38bdf8';
-        ctx.strokeRect(canvas.width / 2 - 35, 305, 70, 30);
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 14px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(`U = ${volt.toFixed(2)}V`, canvas.width / 2, 324);
+        ctx.fillText(`U = ${p.voltage > 0 ? '+' : ''}${p.voltage.toFixed(2)} V`, 350, 356);
+
+        // Bảng HUD dữ liệu quang điện
+        const photonE = 1240 / p.lambdaNm;
+        PhET.drawHUD(ctx, 480, 290, '📊 PHƯƠNG TRÌNH EINSTEIN', [
+            { label: 'Năng lượng photon', val: `${photonE.toFixed(2)} eV`, color: lightColor },
+            { label: 'Công thoát A', val: `${p.workFunc.toFixed(2)} eV`, color: '#facc15' },
+            { label: 'Động năng K_max', val: `${Math.max(0, photonE - p.workFunc).toFixed(2)} eV`, color: '#4ade80' },
+            { label: 'Điện áp hãm U_h', val: `${Math.max(0, photonE - p.workFunc).toFixed(2)} V`, color: '#ef4444' }
+        ], 200);
+
+        ctx.restore();
     }
 
     let lastTime = performance.now();
@@ -243,7 +320,7 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 26. BỨC XẠ VẬT ĐEN (Blackbody Radiation: Wien & Stefan-Boltzmann)
+// 26. BỨC XẠ VẬT ĐEN (Blackbody Radiation: Wien & Stefan-Boltzmann PhET)
 // ─────────────────────────────────────────────────────────────
 (function initBlackbody() {
     const canvas = document.getElementById('blackbodyCanvas');
@@ -253,7 +330,7 @@
     function getParams() {
         const tEl = document.getElementById('bb-temp');
         return {
-            tempK: tEl ? parseFloat(tEl.value) : 5800 // Nhiệt độ tuyệt đối (5800 K là bề mặt Mặt Trời)
+            tempK: tEl ? parseFloat(tEl.value) : 5800
         };
     }
 
@@ -262,12 +339,9 @@
         const tVal = document.getElementById('bb-temp-val');
         if (tVal) tVal.textContent = p.tempK.toFixed(0) + ' K';
 
-        // Định luật dịch chuyển Wien: lambda_max * T = b = 2.898e-3 m*K
         const b = 2.898e-3;
         const lambdaMaxNm = (b / p.tempK) * 1e9;
 
-        // Định luật Stefan-Boltzmann: P = sigma * T^4
-        // sigma = 5.67e-8 W/(m2 K4)
         const sigma = 5.67037e-8;
         const totalPower = sigma * Math.pow(p.tempK, 4);
 
@@ -287,124 +361,174 @@
     }
 
     function getBlackbodyGlow(tempK) {
-        if (tempK < 2000) return '#ef4444';
-        if (tempK < 3500) return '#f59e0b';
-        if (tempK < 6500) return '#ffffff';
+        if (tempK < 2200) return '#ef4444';
+        if (tempK < 4000) return '#f59e0b';
+        if (tempK < 6500) return '#fef08a';
         return '#38bdf8';
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const p = getParams();
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
 
+        PhET.drawLabBackground(ctx, 700, 460, 'PHỔ BỨC XẠ VẬT ĐEN TUYỆT ĐỐI (PLANCK & WIEN)');
+
+        const p = getParams();
         const glowColor = getBlackbodyGlow(p.tempK);
 
-        // 1. Quả cầu nung nóng vật đen bên trái
-        const sphereX = 110;
-        const sphereY = 170;
-        const r = 50;
+        // 1. Quả cầu nung nóng vật đen / Ngôi sao bên trái (Thermal Emitter)
+        const sphereX = 125;
+        const sphereY = 190;
+        const r = 52;
 
-        const radGrad = ctx.createRadialGradient(sphereX, sphereY, 5, sphereX, sphereY, r + 30);
+        // Quầng nhiệt phát sáng tỏa rộng
+        const radGrad = ctx.createRadialGradient(sphereX, sphereY, 5, sphereX, sphereY, r + 45);
         radGrad.addColorStop(0, '#ffffff');
-        radGrad.addColorStop(0.5, glowColor);
+        radGrad.addColorStop(0.4, glowColor);
         radGrad.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = radGrad;
         ctx.beginPath();
-        ctx.arc(sphereX, sphereY, r + 30, 0, Math.PI * 2);
+        ctx.arc(sphereX, sphereY, r + 45, 0, Math.PI * 2);
         ctx.fill();
 
+        // Bề mặt cầu
         ctx.fillStyle = glowColor;
         ctx.beginPath();
         ctx.arc(sphereX, sphereY, r, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px "Space Grotesk", -apple-system, sans-serif';
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 13px "Space Grotesk", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(`Vật đen T = ${p.tempK} K`, sphereX, sphereY + r + 45);
+        ctx.fillText(`VẬT ĐEN T = ${p.tempK} K`, sphereX, sphereY + r + 35);
 
-        // 2. Đồ thị phổ Planck u(lambda, T) bên phải
-        drawPlanckSpectrum(ctx, 230, 30, canvas.width - 250, 310, p);
+        // 2. Đồ thị phổ bức xạ Planck u(lambda, T) bên phải
+        drawPlanckSpectrum(ctx, 245, 45, 430, 360, p);
+
+        ctx.restore();
     }
 
     function drawPlanckSpectrum(ctx, ox, oy, w, h, p) {
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(ox, oy, w, h);
-        ctx.strokeStyle = '#334155';
-        ctx.strokeRect(ox, oy, w, h);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.beginPath();
+        ctx.roundRect(ox, oy, w, h, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
         const xBase = ox + 45;
-        const yBase = oy + h - 35;
+        const yBase = oy + h - 45;
         const dw = w - 65;
-        const dh = h - 60;
+        const dh = h - 75;
 
         // Trục tọa độ: Hoành là bước sóng lambda (0 đến 2500 nm)
         ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(xBase, yBase);
-        ctx.lineTo(xBase + dw, yBase);
-        ctx.moveTo(xBase, yBase);
-        ctx.lineTo(xBase, yBase - dh);
+        ctx.moveTo(xBase, yBase); ctx.lineTo(xBase + dw + 10, yBase);
+        ctx.moveTo(xBase, yBase); ctx.lineTo(xBase, yBase - dh - 15);
         ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('Bước sóng λ (nm) ►', xBase + dw + 10, yBase + 28);
         ctx.textAlign = 'left';
-        ctx.fillText('Bước sóng λ (nm)', xBase + dw - 70, yBase + 25);
-        ctx.fillText('Cường độ I(λ)', xBase - 40, yBase - dh + 10);
+        ctx.fillText('▲ Cường độ bức xạ I(λ)', xBase - 35, yBase - dh - 8);
 
-        // Vùng ánh sáng nhìn thấy (380 - 750 nm)
+        // Vạch chia trục bước sóng
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        for (let i = 0; i <= 5; i++) {
+            const val = (i * 500).toString();
+            ctx.fillText(val, xBase + (i / 5) * dw, yBase + 16);
+        }
+
+        // Vùng ánh sáng nhìn thấy đa sắc Cầu vồng (380 - 750 nm)
         const vMin = xBase + (380 / 2500) * dw;
         const vMax = xBase + (750 / 2500) * dw;
         const visGrad = ctx.createLinearGradient(vMin, 0, vMax, 0);
-        visGrad.addColorStop(0, 'rgba(139, 92, 246, 0.25)');
-        visGrad.addColorStop(0.5, 'rgba(34, 197, 94, 0.25)');
-        visGrad.addColorStop(1, 'rgba(239, 68, 68, 0.25)');
+        visGrad.addColorStop(0, 'rgba(168, 85, 247, 0.35)');
+        visGrad.addColorStop(0.25, 'rgba(59, 130, 246, 0.35)');
+        visGrad.addColorStop(0.5, 'rgba(34, 197, 94, 0.35)');
+        visGrad.addColorStop(0.75, 'rgba(245, 158, 11, 0.35)');
+        visGrad.addColorStop(1, 'rgba(239, 68, 68, 0.35)');
         ctx.fillStyle = visGrad;
         ctx.fillRect(vMin, yBase - dh, vMax - vMin, dh);
 
-        // Đường cong phổ Planck: I(lambda, T) = (8*pi*h*c / lambda^5) / (exp(hc / lambda k T) - 1)
-        // Dùng dạng chuẩn hóa theo đỉnh
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.font = 'bold 9.5px "Space Grotesk", sans-serif';
+        ctx.fillText('Ánh sáng khả kiến', (vMin + vMax) / 2, yBase - dh + 14);
+
+        // Đường cong phổ Planck: chuẩn hóa theo đỉnh
         const b = 2.898e-3;
-        const lambdaPeak = (b / p.tempK) * 1e9; // nm
+        const lambdaPeak = (b / p.tempK) * 1e9;
 
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 2.5;
+        // Vùng gradient dưới đường cong phổ
+        const curveGrad = ctx.createLinearGradient(0, yBase - dh, 0, yBase);
+        curveGrad.addColorStop(0, 'rgba(245, 158, 11, 0.4)');
+        curveGrad.addColorStop(1, 'rgba(245, 158, 11, 0.02)');
+
         ctx.beginPath();
-
+        ctx.moveTo(xBase, yBase);
         let peakX = 0, peakY = 0;
 
-        for (let l = 40; l <= 2500; l += 20) {
+        for (let l = 40; l <= 2500; l += 15) {
             const xNorm = l / lambdaPeak;
-            // Dạng chuẩn hóa f(x) = (1/x^5) / (exp(4.965 / x) - 1)
             const f = (1 / Math.pow(xNorm, 5)) / (Math.exp(4.9651 / xNorm) - 1);
-            const normF = f / 0.0468; // Đỉnh đạt 1.0
+            const normF = f / 0.0468;
 
             const px = xBase + (l / 2500) * dw;
-            const py = yBase - Math.min(dh - 10, normF * (dh - 30));
+            const py = yBase - Math.min(dh - 10, normF * (dh - 25));
 
-            if (l === 40) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
+            ctx.lineTo(px, py);
 
             if (Math.abs(l - lambdaPeak) < 15) {
                 peakX = px;
                 peakY = py;
             }
         }
+        ctx.lineTo(xBase + dw, yBase);
+        ctx.closePath();
+        ctx.fillStyle = curveGrad;
+        ctx.fill();
+
+        // Đường cong phổ chính màu vàng rực
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        for (let l = 40; l <= 2500; l += 15) {
+            const xNorm = l / lambdaPeak;
+            const f = (1 / Math.pow(xNorm, 5)) / (Math.exp(4.9651 / xNorm) - 1);
+            const normF = f / 0.0468;
+
+            const px = xBase + (l / 2500) * dw;
+            const py = yBase - Math.min(dh - 10, normF * (dh - 25));
+
+            if (l === 40) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
         ctx.stroke();
 
-        // Đánh dấu đỉnh bước sóng cực đại lambda_max
-        if (peakX > 0) {
+        // Đánh dấu đỉnh Wien lambda_max
+        if (peakX > 0 && peakX < xBase + dw) {
             ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 8;
             ctx.beginPath();
-            ctx.arc(peakX, peakY, 5, 0, Math.PI * 2);
+            ctx.arc(peakX, peakY, 5.5, 0, Math.PI * 2);
             ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
 
             ctx.strokeStyle = '#ef4444';
             ctx.setLineDash([3, 3]);
@@ -414,8 +538,9 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            ctx.fillStyle = '#ef4444';
-            ctx.fillText(`λ_max = ${lambdaPeak.toFixed(0)}nm`, peakX - 25, peakY - 10);
+            ctx.fillStyle = '#f87171';
+            ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+            ctx.fillText(`λ_max = ${lambdaPeak.toFixed(0)}nm`, peakX, peakY - 12);
         }
     }
 
@@ -432,16 +557,15 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-// 27. NGUYÊN TỬ BOHR & TÁN XẠ RUTHERFORD (Bohr & Rutherford)
+// 27. NGUYÊN TỬ BOHR & TÁN XẠ RUTHERFORD (Bohr & Rutherford PhET)
 // ─────────────────────────────────────────────────────────────
 (function initBohrRutherford() {
     const canvas = document.getElementById('bohrCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let mode = 'bohr'; // 'bohr' or 'rutherford'
+    let mode = 'bohr';
     let currentN = 3;
-    let targetN = 1;
     let electronTheta = 0;
     let emittedPhoton = null;
     let alphaParticles = [];
@@ -458,9 +582,7 @@
         const nVal = document.getElementById('bohr-level-val');
         if (nVal) nVal.textContent = p.n;
 
-        // Bán kính Bohr: r_n = n^2 * r0 (r0 = 0.53 Angstrom)
         const rn = p.n * p.n * 0.53;
-        // Mức năng lượng: E_n = -13.6 / n^2 eV
         const En = -13.6 / (p.n * p.n);
 
         const rEl = document.getElementById('bohr-radius');
@@ -474,17 +596,15 @@
         const p = getParams();
         if (toN >= p.n) return;
         currentN = p.n;
-        targetN = toN;
 
-        // Phát ra photon năng lượng deltaE = En - Em
         const deltaE = 13.6 * (1 / (toN * toN) - 1 / (currentN * currentN));
         const lambdaNm = 1240 / deltaE;
 
         emittedPhoton = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            vx: 180,
-            vy: -100,
+            x: 350,
+            y: 230,
+            vx: 190,
+            vy: -110,
             lambda: lambdaNm,
             energy: deltaE
         };
@@ -499,23 +619,23 @@
             if (emittedPhoton) {
                 emittedPhoton.x += emittedPhoton.vx * dt;
                 emittedPhoton.y += emittedPhoton.vy * dt;
-                if (emittedPhoton.x > canvas.width || emittedPhoton.y < 0) {
+                if (emittedPhoton.x > 700 || emittedPhoton.y < 0) {
                     emittedPhoton = null;
                 }
             }
         } else {
-            // Cập nhật tán xạ Rutherford hạt alpha
-            if (Math.random() < 0.25) {
+            // Hạt alpha tán xạ
+            if (Math.random() < 0.28) {
                 alphaParticles.push({
-                    x: 20,
-                    y: 80 + Math.random() * 200,
-                    vx: 240,
+                    x: 30,
+                    y: 90 + Math.random() * 260,
+                    vx: 260,
                     vy: 0
                 });
             }
 
-            const goldX = canvas.width / 2;
-            const goldY = canvas.height / 2;
+            const goldX = 350;
+            const goldY = 230;
 
             for (let i = alphaParticles.length - 1; i >= 0; i--) {
                 const pt = alphaParticles[i];
@@ -523,9 +643,8 @@
                 const dy = pt.y - goldY;
                 const dist = Math.hypot(dx, dy);
 
-                // Lực đẩy Coulomb giữa hạt alpha (+2e) và hạt nhân vàng (+79e): F ~ 1 / r^2
-                if (dist > 8 && dist < 160) {
-                    const F = 65000 / (dist * dist);
+                if (dist > 8 && dist < 170) {
+                    const F = 75000 / (dist * dist);
                     pt.vx += (dx / dist) * F * dt;
                     pt.vy += (dy / dist) * F * dt;
                 }
@@ -533,7 +652,7 @@
                 pt.x += pt.vx * dt;
                 pt.y += pt.vy * dt;
 
-                if (pt.x > canvas.width || pt.x < 0 || pt.y > canvas.height || pt.y < 0) {
+                if (pt.x > 700 || pt.x < 0 || pt.y > 460 || pt.y < 0) {
                     alphaParticles.splice(i, 1);
                 }
             }
@@ -542,19 +661,22 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        bgGrad.addColorStop(0, '#040d1a');
-        bgGrad.addColorStop(1, '#091e38');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
+        
+        ctx.save();
+        ctx.scale(canvas.width / 700, canvas.height / 460);
+
+        PhET.drawLabBackground(ctx, 700, 460, 'MẪU NGUYÊN TỬ BOHR & TÁN XẠ RUTHERFORD');
+
+        const cx = 350;
+        const cy = 230;
 
         if (mode === 'bohr') {
             drawBohrAtom(ctx, cx, cy);
         } else {
             drawRutherfordScattering(ctx, cx, cy);
         }
+
+        ctx.restore();
     }
 
     function drawBohrAtom(ctx, cx, cy) {
@@ -562,91 +684,124 @@
 
         // 1. Hạt nhân Proton ở tâm (+e)
         ctx.fillStyle = '#ef4444';
+        ctx.shadowColor = '#ef4444';
+        ctx.shadowBlur = 12;
         ctx.beginPath();
-        ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+        ctx.arc(cx, cy, 12, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 11px monospace';
         ctx.textAlign = 'center';
         ctx.fillText('+e', cx, cy + 4);
 
         // 2. Các quỹ đạo tròn dừng n = 1, 2, 3, 4, 5
-        const baseR = 35;
+        const baseR = 36;
         for (let n = 1; n <= 5; n++) {
-            const r = baseR * Math.sqrt(n) * 1.5;
-            ctx.strokeStyle = n === p.n ? '#38bdf8' : 'rgba(148, 163, 184, 0.25)';
-            ctx.lineWidth = n === p.n ? 2 : 1;
-            ctx.setLineDash([4, 4]);
+            const r = baseR * Math.sqrt(n) * 1.55;
+            const isCur = n === p.n;
+
+            ctx.strokeStyle = isCur ? '#38bdf8' : 'rgba(148, 163, 184, 0.25)';
+            ctx.lineWidth = isCur ? 2.5 : 1.2;
+            ctx.setLineDash(isCur ? [] : [4, 4]);
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '10px "Space Grotesk", -apple-system, sans-serif';
-            ctx.fillText(`n=${n}`, cx + r + 4, cy - 4);
+            ctx.fillStyle = isCur ? '#38bdf8' : '#64748b';
+            ctx.font = 'bold 10.5px "Space Grotesk", sans-serif';
+            ctx.fillText(`n=${n}`, cx + r + 5, cy - 4);
         }
 
-        // 3. Electron trên quỹ đạo hiện tại
-        const curR = baseR * Math.sqrt(p.n) * 1.5;
+        // 3. Electron đang quay trên quỹ đạo lượng tử
+        const curR = baseR * Math.sqrt(p.n) * 1.55;
         const ex = cx + curR * Math.cos(electronTheta);
         const ey = cy + curR * Math.sin(electronTheta);
 
         ctx.fillStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 10;
         ctx.beginPath();
-        ctx.arc(ex, ey, 6, 0, Math.PI * 2);
+        ctx.arc(ex, ey, 7, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // 4. Photon phát xạ nếu đang chuyển mức
-        if (emittedPhoton) {
-            ctx.strokeStyle = '#f59e0b';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(emittedPhoton.x, emittedPhoton.y);
-            ctx.lineTo(emittedPhoton.x + 20, emittedPhoton.y - 12);
-            ctx.stroke();
-
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = '11px "Space Grotesk", -apple-system, sans-serif';
-            ctx.fillText(`Photon hν (${emittedPhoton.energy.toFixed(1)}eV)`, emittedPhoton.x + 25, emittedPhoton.y - 10);
-        }
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Mô Hình Nguyên Tử Bohr: Quỹ đạo lượng tử hóa r_n = n²·r₀, Mức năng lượng E_n = -13.6/n² eV', cx, 25);
-    }
-
-    function drawRutherfordScattering(ctx, cx, cy) {
-        // Hạt nhân Vàng (Gold Nucleus +79e)
-        ctx.fillStyle = '#fbbf24';
-        ctx.beginPath();
-        ctx.arc(cx, cy, 14, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.fillStyle = '#000000';
+        // 4. Photon phát xạ bay ra khi chuyển mức
+        if (emittedPhoton) {
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 3.5;
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(emittedPhoton.x, emittedPhoton.y);
+            ctx.lineTo(emittedPhoton.x + 24, emittedPhoton.y - 14);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+            ctx.fillText(`Photon hν (${emittedPhoton.energy.toFixed(1)}eV)`, emittedPhoton.x + 30, emittedPhoton.y - 10);
+        }
+
+        // HUD thông số mức năng lượng Bohr
+        const En = -13.6 / (p.n * p.n);
+        const rn = p.n * p.n * 0.53;
+        PhET.drawHUD(ctx, 480, 290, '📊 TRẠNG THÁI DỪNG BOHR', [
+            { label: 'Số lượng tử n', val: p.n.toString(), color: '#38bdf8' },
+            { label: 'Bán kính r_n', val: `${rn.toFixed(2)} Å`, color: '#facc15' },
+            { label: 'Mức năng lượng E_n', val: `${En.toFixed(2)} eV`, color: '#4ade80' }
+        ], 200);
+    }
+
+    function drawRutherfordScattering(ctx, cx, cy) {
+        // Hạt nhân Vàng (Gold Nucleus +79e)
+        ctx.fillStyle = '#f59e0b';
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
         ctx.font = 'bold 11px monospace';
         ctx.textAlign = 'center';
         ctx.fillText('+79e', cx, cy + 4);
 
-        // Các hạt alpha bắn tới
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+        ctx.fillText('Hạt nhân Vàng (Au)', cx, cy + 32);
+
+        // Các hạt alpha bắn tới để lại vệt sáng
         alphaParticles.forEach(pt => {
             ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 6;
             ctx.beginPath();
-            ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+            ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
             ctx.fill();
+            ctx.shadowBlur = 0;
         });
 
+        // Súng bắn hạt alpha bên trái
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(20, 180, 45, 100);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.strokeRect(20, 180, 45, 100);
         ctx.fillStyle = '#ffffff';
-        ctx.font = '12px "Space Grotesk", -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Thí Nghiệm Tán Xạ Hạt Alpha (α) Rutherford: Khám phá hạt nhân nguyên tử!', cx, 25);
+        ctx.font = 'bold 10px "Space Grotesk", sans-serif';
+        ctx.fillText('Nguồn α', 42, 235);
     }
 
     let lastTime = performance.now();
@@ -677,4 +832,3 @@
 
     syncLabels();
 })();
-
