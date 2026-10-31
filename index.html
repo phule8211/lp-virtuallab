@@ -1,0 +1,3086 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚛️ LP.VirtualLab - Phòng Thí Nghiệm Vật Lý Ảo Tương Tác</title>
+
+    <!-- Meta SEO & Định danh -->
+    <meta name="description" content="LP.VirtualLab - Phòng Thí Nghiệm Vật Lý Ảo Tương Tác. Mô phỏng trực quan 27 bài thí nghiệm Vật lý Đại cương 1 & 2 (Cơ học, Nhiệt học, Sóng cơ, Điện từ, Quang học, Vật lý lượng tử). Tác giả: Lê Ngọc Phú - SĐT: 0853257289.">
+    <meta name="keywords" content="LP.VirtualLab, Vật lý ảo, PhET, Physlets, GeoGebra, Matlab, Vật lý đại cương, Cơ học, Nhiệt học, Sóng cơ, Điện từ học, Quang học, Lượng tử, Lê Ngọc Phú">
+    <meta name="author" content="Lê Ngọc Phú (0853257289 - 25020994@vnu.edu.vn)">
+    <meta name="theme-color" content="#0284c7">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="⚛️ LP.VirtualLab - Phòng Thí Nghiệm Vật Lý Ảo Tương Tác">
+    <meta property="og:description" content="Khám phá 27 mô phỏng vật lý đại cương tương tác trực tiếp với giao diện hiện đại chuẩn mực học thuật. Tác giả: Lê Ngọc Phú - SĐT: 0853257289.">
+    <meta property="og:image" content="favicon.svg">
+
+    <!-- Favicon & PWA Manifest -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=1793431916">
+
+    <!-- KaTeX for pristine mathematical typography -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+</head>
+<body>
+    <!-- Animated background particles -->
+    <canvas id="bg-particles"></canvas>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+        <div class="mobile-brand" data-section="home">
+            <span class="logo-icon">⚛️</span>
+            <span class="logo-text">LP.VirtualLab</span>
+        </div>
+        <button class="theme-toggle" id="themeToggleMobile">🌙</button>
+    </header>
+
+    <!-- Overlay for mobile drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Left Vertical Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="nav-brand" data-section="home">
+                <span class="logo-icon">⚛️</span>
+                <div class="brand-text-wrap">
+                    <span class="logo-text">LP.VirtualLab</span>
+                    <span class="logo-sub">Phòng Thí Nghiệm Ảo</span>
+                </div>
+            </div>
+            <span class="badge">VNU-UET</span>
+        </div>
+
+        <!-- Quick Search Input in Sidebar -->
+        <div class="search-box-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="sidebarSearchInput" class="search-input" placeholder="Tìm kiếm thí nghiệm (vd: Carnot, Snell...)...">
+        </div>
+
+        <div class="sidebar-content">
+            <!-- Home Link -->
+            <div class="nav-single-item">
+                <a href="#" class="nav-link nav-home-link active" data-section="home">
+                    <span class="link-icon">🏠</span>
+                    <span class="link-title">Trang Chủ & Tổng Quan</span>
+                </a>
+            </div>
+
+            <!-- ==================== VẬT LÝ ĐẠI CƯƠNG 1 ==================== -->
+            <div class="sidebar-section-divider">VẬT LÝ ĐẠI CƯƠNG 1</div>
+
+            <!-- Category 1: CƠ HỌC -->
+            <div class="nav-category" data-category="mechanics">
+                <div class="category-header">
+                    <span class="cat-left">
+                        <span class="cat-icon">⚙️</span>
+                        <span class="cat-title">1. Cơ Học</span>
+                    </span>
+                    <span class="cat-right">
+                        <span class="cat-badge">7</span>
+                        <span class="cat-arrow">▾</span>
+                    </span>
+                </div>
+                <div class="category-items">
+                    <a href="#" class="nav-link nav-sublink" data-section="projectile">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🚀</span>
+                        <span class="link-text">Ném Xiên & Ném Ngang</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="newton-friction">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">📐</span>
+                        <span class="link-text">Newton & Ma Sát Mặt Nghiêng</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="circular-motion">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔄</span>
+                        <span class="link-text">Chuyển Động Tròn & Hướng Tâm</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="collision">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">💥</span>
+                        <span class="link-text">Va Chạm & Động Lượng</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="energy-skate">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🛹</span>
+                        <span class="link-text">Bảo Toàn Cơ Năng (Skate Park)</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="balancing-act">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">⚖️</span>
+                        <span class="link-text">Cân Bằng Vật Rắn & Đòn Bẩy</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="rotational-inertia">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">💫</span>
+                        <span class="link-text">Chuyển Động Quay & Momen Quán Tính</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 2: NHIỆT HỌC & THỐNG KÊ -->
+            <div class="nav-category" data-category="thermo">
+                <div class="category-header">
+                    <span class="cat-left">
+                        <span class="cat-icon">🔥</span>
+                        <span class="cat-title">2. Nhiệt Học & Thống Kê</span>
+                    </span>
+                    <span class="cat-right">
+                        <span class="cat-badge">3</span>
+                        <span class="cat-arrow">▾</span>
+                    </span>
+                </div>
+                <div class="category-items">
+                    <a href="#" class="nav-link nav-sublink" data-section="gas-properties">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🌡️</span>
+                        <span class="link-text">Khí Lý Tưởng (P-V-T)</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="maxwell-boltzmann">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">📊</span>
+                        <span class="link-text">Phân Bố Maxwell-Boltzmann</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="carnot-cycle">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">⚙️</span>
+                        <span class="link-text">Quá Trình & Chu Trình Carnot</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 3: DAO ĐỘNG & SÓNG CƠ -->
+            <div class="nav-category" data-category="waves">
+                <div class="category-header">
+                    <span class="cat-left">
+                        <span class="cat-icon">🌊</span>
+                        <span class="cat-title">3. Dao Động & Sóng Cơ</span>
+                    </span>
+                    <span class="cat-right">
+                        <span class="cat-badge">3</span>
+                        <span class="cat-arrow">▾</span>
+                    </span>
+                </div>
+                <div class="category-items">
+                    <a href="#" class="nav-link nav-sublink" data-section="harmonic">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🎯</span>
+                        <span class="link-text">Dao Động Điều Hòa (Lò Xo & Con Lắc)</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="resonance">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔔</span>
+                        <span class="link-text">Dao Động Tắt Dần & Cộng Hưởng</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="waves-standing">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🎻</span>
+                        <span class="link-text">Sóng Cơ, Giao Thoa & Sóng Dừng</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ==================== VẬT LÝ ĐẠI CƯƠNG 2 ==================== -->
+            <div class="sidebar-section-divider">VẬT LÝ ĐẠI CƯƠNG 2</div>
+
+            <!-- Category 4: ĐIỆN HỌC -->
+            <div class="nav-category" data-category="electricity">
+                <div class="category-header">
+                    <span class="cat-left">
+                        <span class="cat-icon">⚡</span>
+                        <span class="cat-title">4. Điện Học</span>
+                    </span>
+                    <span class="cat-right">
+                        <span class="cat-badge">3</span>
+                        <span class="cat-arrow">▾</span>
+                    </span>
+                </div>
+                <div class="category-items">
+                    <a href="#" class="nav-link nav-sublink" data-section="coulomb-field">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔵</span>
+                        <span class="link-text">Coulomb & Điện Trường Tĩnh</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="capacitor">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔋</span>
+                        <span class="link-text">Tụ Điện & Hằng Số Điện Môi</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="circuit-dc">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔌</span>
+                        <span class="link-text">Mạch Điện D.C. & Kirchhoff</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 5: TỪ HỌC & CẢM ỨNG ĐIỆN TỪ -->
+            <div class="nav-category" data-category="magnetism">
+                <div class="category-header">
+                    <span class="cat-left">
+                        <span class="cat-icon">🧭</span>
+                        <span class="cat-title">5. Từ Học & Cảm Ứng</span>
+                    </span>
+                    <span class="cat-right">
+                        <span class="cat-badge">3</span>
+                        <span class="cat-arrow">▾</span>
+                    </span>
+                </div>
+                <div class="category-items">
+                    <a href="#" class="nav-link nav-sublink" data-section="lorentz-force">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🧲</span>
+                        <span class="link-text">Từ Trường & Lực Lorentz</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="faraday">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🌀</span>
+                        <span class="link-text">Cảm Ứng Điện Từ (Faraday & Lenz)</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="rlc-ac">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">⚡</span>
+                        <span class="link-text">Mạch Xoay Chiều A.C. RLC</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 6: QUANG HỌC -->
+            <div class="nav-category" data-category="optics">
+                <div class="category-header">
+                    <span class="cat-left">
+                        <span class="cat-icon">🌈</span>
+                        <span class="cat-title">6. Quang Học</span>
+                    </span>
+                    <span class="cat-right">
+                        <span class="cat-badge">5</span>
+                        <span class="cat-arrow">▾</span>
+                    </span>
+                </div>
+                <div class="category-items">
+                    <a href="#" class="nav-link nav-sublink" data-section="snell-refraction">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔦</span>
+                        <span class="link-text">Khúc Xạ & Phản Xạ Toàn Phần</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="geometric-optics">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔍</span>
+                        <span class="link-text">Quang Hình: Thấu Kính & Gương</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="young-interference">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">☀️</span>
+                        <span class="link-text">Giao Thoa (Young & Newton)</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="diffraction">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔬</span>
+                        <span class="link-text">Nhiễu Xạ (Khe Hẹp & Đĩa Airy)</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="polarization">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🕶️</span>
+                        <span class="link-text">Phân Cực (Malus & Brewster)</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 7: VẬT LÝ HIỆN ĐẠI -->
+            <div class="nav-category" data-category="modern">
+                <div class="category-header">
+                    <span class="cat-left">
+                        <span class="cat-icon">⚛️</span>
+                        <span class="cat-title">7. Vật Lý Hiện Đại</span>
+                    </span>
+                    <span class="cat-right">
+                        <span class="cat-badge">3</span>
+                        <span class="cat-arrow">▾</span>
+                    </span>
+                </div>
+                <div class="category-items">
+                    <a href="#" class="nav-link nav-sublink" data-section="photoelectric">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">💡</span>
+                        <span class="link-text">Hiệu Ứng Quang Điện Ngoài</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="blackbody">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🔴</span>
+                        <span class="link-text">Bức Xạ Vật Đen (Wien & Planck)</span>
+                    </a>
+                    <a href="#" class="nav-link nav-sublink" data-section="bohr-rutherford">
+                        <span class="link-bullet"></span>
+                        <span class="link-icon">🪐</span>
+                        <span class="link-text">Nguyên Tử Bohr & Rutherford</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="theme-toggle" id="themeToggle">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-label">Giao diện tối</span>
+            </button>
+            <div class="footer-university">Trường ĐH Công Nghệ - ĐHQGHN</div>
+            <div class="footer-author">Lê Ngọc Phú • 0853257289</div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-tag">Virtual Physics Laboratory Platform</div>
+                    <h1 class="hero-title">LP.VirtualLab</h1>
+                    <p class="hero-subtitle">Phòng Thí Nghiệm Vật Lý Ảo Tương Tác</p>
+                    <p class="hero-desc">Hệ thống mô phỏng 27 bài thí nghiệm Vật lý Đại cương 1 & 2 với độ chính xác cao, đồ thị thời gian thực và tương tác trực quan 60 FPS.</p>
+
+                    <div class="hero-stats">
+                        <div class="stat-card">
+                            <span class="stat-number">27</span>
+                            <span class="stat-label">Bài mô phỏng</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">07</span>
+                            <span class="stat-label">Chuyên đề lớn</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">02</span>
+                            <span class="stat-label">Học phần Đại cương</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Tương tác trực tiếp</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Reference Platforms Strip -->
+                <div class="reference-platforms-wrap">
+                    <div class="reference-platforms-title">🏛️ Nền tảng tham khảo & Cảm hứng phát triển</div>
+                    <div class="reference-tags-list">
+                        <span class="ref-tag"><span class="ref-tag-icon">🎓</span> PhET Interactive Simulations (ĐH Colorado Boulder)</span>
+                        <span class="ref-tag"><span class="ref-tag-icon">📐</span> Physlets Physics</span>
+                        <span class="ref-tag"><span class="ref-tag-icon">📊</span> GeoGebra Classic</span>
+                        <span class="ref-tag"><span class="ref-tag-icon">💻</span> Matlab / Simulink</span>
+                        <span class="ref-tag"><span class="ref-tag-icon">🧪</span> Labster Virtual Lab</span>
+                    </div>
+                </div>
+
+                <!-- ==================== HỌC PHẦN 1 ==================== -->
+                <div class="course-division-banner">
+                    <div class="course-division-title">
+                        <span>📘</span> HỌC PHẦN 1: VẬT LÝ ĐẠI CƯƠNG 1 (CƠ HỌC - NHIỆT HỌC - DAO ĐỘNG & SÓNG)
+                    </div>
+                    <span class="course-division-badge">13 Thí nghiệm</span>
+                </div>
+
+                <!-- Group 1: Cơ học -->
+                <div class="topic-group-section">
+                    <div class="topic-header">
+                        <div class="topic-title-wrap">
+                            <span class="topic-icon">⚙️</span>
+                            <h2 class="topic-title">1. Cơ Học (Mechanics)</h2>
+                        </div>
+                        <span class="topic-count">7 thí nghiệm</span>
+                    </div>
+                    <div class="experiment-grid">
+                        <div class="exp-card" data-target="projectile">
+                            <div class="exp-icon">🚀</div>
+                            <h3>Chuyển Động Ném Xiên & Ném Ngang</h3>
+                            <p>Khảo sát quỹ đạo parabol, tầm xa, tầm cao, vận tốc theo thời gian dưới tác dụng của trọng lực và lực cản không khí.</p>
+                            <span class="exp-tag">Động học (PhET Projectile)</span>
+                        </div>
+                        <div class="exp-card" data-target="newton-friction">
+                            <div class="exp-icon">📐</div>
+                            <h3>Định Luật Newton & Ma Sát</h3>
+                            <p>Kiểm chứng F = ma, ma sát nghỉ, ma sát trượt và chuyển động của vật trên mặt phẳng nghiêng góc α.</p>
+                            <span class="exp-tag">Động lực học (PhET Forces)</span>
+                        </div>
+                        <div class="exp-card" data-target="circular-motion">
+                            <div class="exp-icon">🔄</div>
+                            <h3>Chuyển Động Tròn Đều & Lực Hướng Tâm</h3>
+                            <p>Mối liên hệ vận tốc dài v, vận tốc góc ω, gia tốc hướng tâm và lực hướng tâm; khảo sát đứt dây theo quán tính.</p>
+                            <span class="exp-tag">Cơ học</span>
+                        </div>
+                        <div class="exp-card" data-target="collision">
+                            <div class="exp-icon">💥</div>
+                            <h3>Va Chạm & Bảo Toàn Động Lượng</h3>
+                            <p>Khảo sát va chạm đàn hồi (e = 1) và va chạm mềm (e = 0), sự biến thiên động lượng và cơ năng.</p>
+                            <span class="exp-tag">Bảo toàn (PhET Collision)</span>
+                        </div>
+                        <div class="exp-card" data-target="energy-skate">
+                            <div class="exp-icon">🛹</div>
+                            <h3>Bảo Toàn Cơ Năng (Skate Park)</h3>
+                            <p>Sự chuyển hóa qua lại giữa thế năng Ep và động năng Ek trên đường trượt máng cong parabol.</p>
+                            <span class="exp-tag">Cơ năng (PhET Skate Park)</span>
+                        </div>
+                        <div class="exp-card" data-target="balancing-act">
+                            <div class="exp-icon">⚖️</div>
+                            <h3>Cân Bằng Vật Rắn & Momen Lực</h3>
+                            <p>Điều kiện cân bằng quay, quy tắc momen lực áp dụng trên đòn bẩy và thanh bập bênh.</p>
+                            <span class="exp-tag">Tĩnh học (PhET Balancing)</span>
+                        </div>
+                        <div class="exp-card" data-target="rotational-inertia">
+                            <div class="exp-icon">💫</div>
+                            <h3>Chuyển Động Quay & Momen Quán Tính</h3>
+                            <p>Bảo toàn momen động lượng L = I·ω, khảo sát vận tốc góc khi thay đổi sự phân bố khối lượng đối với trục quay.</p>
+                            <span class="exp-tag">Vật rắn</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Nhiệt học & Thống kê -->
+                <div class="topic-group-section">
+                    <div class="topic-header">
+                        <div class="topic-title-wrap">
+                            <span class="topic-icon">🔥</span>
+                            <h2 class="topic-title">2. Nhiệt Học & Vật Lý Thống Kê</h2>
+                        </div>
+                        <span class="topic-count">3 thí nghiệm</span>
+                    </div>
+                    <div class="experiment-grid">
+                        <div class="exp-card" data-target="gas-properties">
+                            <div class="exp-icon">🌡️</div>
+                            <h3>Khí Lý Tưởng (P-V-T)</h3>
+                            <p>Khảo sát quan hệ áp suất P, thể tích V, nhiệt độ T theo các định luật Boyle-Mariotte, Charles, Gay-Lussac.</p>
+                            <span class="exp-tag">Nhiệt học (PhET Gas)</span>
+                        </div>
+                        <div class="exp-card" data-target="maxwell-boltzmann">
+                            <div class="exp-icon">📊</div>
+                            <h3>Động Học Phân Tử & Maxwell-Boltzmann</h3>
+                            <p>Quan sát chuyển động hỗn loạn của các phân tử khí và biểu đồ phân bố vận tốc thực tế theo nhiệt độ T và khối lượng mol M.</p>
+                            <span class="exp-tag">Vật lý thống kê</span>
+                        </div>
+                        <div class="exp-card" data-target="carnot-cycle">
+                            <div class="exp-icon">⚙️</div>
+                            <h3>Quá Trình Nhiệt Động & Chu Trình Carnot</h3>
+                            <p>Khảo sát công W, nhiệt lượng Q và biến thiên nội năng trong các quá trình đẳng áp, đẳng tích, đẳng nhiệt, đoạn nhiệt; tính hiệu suất η.</p>
+                            <span class="exp-tag">Nhiệt động học</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Dao động & Sóng cơ -->
+                <div class="topic-group-section">
+                    <div class="topic-header">
+                        <div class="topic-title-wrap">
+                            <span class="topic-icon">🌊</span>
+                            <h2 class="topic-title">3. Dao Động & Sóng Cơ</h2>
+                        </div>
+                        <span class="topic-count">3 thí nghiệm</span>
+                    </div>
+                    <div class="experiment-grid">
+                        <div class="exp-card" data-target="harmonic">
+                            <div class="exp-icon">🎯</div>
+                            <h3>Dao Động Điều Hòa (Lò Xo & Con Lắc)</h3>
+                            <p>Khảo sát chu kỳ, tần số, sự phụ thuộc vào khối lượng m, độ cứng k, chiều dài L và gia tốc trọng trường g.</p>
+                            <span class="exp-tag">Dao động (PhET Pendulum)</span>
+                        </div>
+                        <div class="exp-card" data-target="resonance">
+                            <div class="exp-icon">🔔</div>
+                            <h3>Dao Động Tắt Dần & Hiện Tượng Cộng Hưởng</h3>
+                            <p>Ảnh hưởng của lực cản môi trường đến biên độ dao động và hiện tượng cộng hưởng cực đại khi Ω = ω₀.</p>
+                            <span class="exp-tag">Cộng hưởng</span>
+                        </div>
+                        <div class="exp-card" data-target="waves-standing">
+                            <div class="exp-icon">🎻</div>
+                            <h3>Sóng Cơ, Giao Thoa & Sóng Dừng</h3>
+                            <p>Biểu diễn sự truyền sóng dọc/ngang, giao thoa từ 2 nguồn kết hợp và sự hình thành nút/bụng sóng trên dây đàn hồi.</p>
+                            <span class="exp-tag">Sóng học (PhET Waves)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== HỌC PHẦN 2 ==================== -->
+                <div class="course-division-banner">
+                    <div class="course-division-title">
+                        <span>📙</span> HỌC PHẦN 2: VẬT LÝ ĐẠI CƯƠNG 2 (ĐIỆN - TỪ - QUANG - VẬT LÝ HIỆN ĐẠI)
+                    </div>
+                    <span class="course-division-badge">14 Thí nghiệm</span>
+                </div>
+
+                <!-- Group 4: Điện học -->
+                <div class="topic-group-section">
+                    <div class="topic-header">
+                        <div class="topic-title-wrap">
+                            <span class="topic-icon">⚡</span>
+                            <h2 class="topic-title">4. Điện Học (Electricity)</h2>
+                        </div>
+                        <span class="topic-count">3 thí nghiệm</span>
+                    </div>
+                    <div class="experiment-grid">
+                        <div class="exp-card" data-target="coulomb-field">
+                            <div class="exp-icon">🔵</div>
+                            <h3>Định Luật Coulomb & Điện Trường Tĩnh</h3>
+                            <p>Lực tương tác giữa các điện tích điểm, mạng lưới vector đường sức điện trường và điện thế xung quanh hệ điện tích.</p>
+                            <span class="exp-tag">Điện tích (PhET Charges)</span>
+                        </div>
+                        <div class="exp-card" data-target="capacitor">
+                            <div class="exp-icon">🔋</div>
+                            <h3>Tụ Điện & Hằng Số Điện Môi</h3>
+                            <p>Mối liên hệ điện dung C, diện tích S, khoảng cách d và điện môi ε; sự tích trữ điện tích Q và năng lượng W = ½CU².</p>
+                            <span class="exp-tag">Tụ điện (PhET Capacitor)</span>
+                        </div>
+                        <div class="exp-card" data-target="circuit-dc">
+                            <div class="exp-icon">🔌</div>
+                            <h3>Mạch Điện D.C. & Các Định Luật Kirchhoff</h3>
+                            <p>Lắp ráp mạch nối tiếp, song song, đo dòng điện, điện áp và kiểm chứng định luật Ohm, định luật Kirchhoff KCL/KVL.</p>
+                            <span class="exp-tag">Mạch điện (PhET Circuit)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 5: Từ học & Cảm ứng điện từ -->
+                <div class="topic-group-section">
+                    <div class="topic-header">
+                        <div class="topic-title-wrap">
+                            <span class="topic-icon">🧭</span>
+                            <h2 class="topic-title">5. Từ Học & Cảm Ứng Điện Từ</h2>
+                        </div>
+                        <span class="topic-count">3 thí nghiệm</span>
+                    </div>
+                    <div class="experiment-grid">
+                        <div class="exp-card" data-target="lorentz-force">
+                            <div class="exp-icon">🧲</div>
+                            <h3>Từ Trường & Lực Lorentz</h3>
+                            <p>Khảo sát từ trường của nam châm, dòng điện và quỹ đạo chuyển động tròn / xoắn ốc của hạt mang điện trong từ trường đều B.</p>
+                            <span class="exp-tag">Lực từ Lorentz</span>
+                        </div>
+                        <div class="exp-card" data-target="faraday">
+                            <div class="exp-icon">🌀</div>
+                            <h3>Hiện Tượng Cảm Ứng Điện Từ (Faraday & Lenz)</h3>
+                            <p>Sự xuất hiện dòng điện cảm ứng khi từ thông biến thiên, nguyên lý máy phát điện xoay chiều và máy biến áp.</p>
+                            <span class="exp-tag">Cảm ứng (PhET Faraday)</span>
+                        </div>
+                        <div class="exp-card" data-target="rlc-ac">
+                            <div class="exp-icon">⚡</div>
+                            <h3>Mạch Điện Xoay Chiều A.C. RLC</h3>
+                            <p>Khảo sát dao động điện từ, độ lệch pha φ giữa u(t) và i(t), hiện tượng cộng hưởng điện khi ωL = 1/(ωC) và giản đồ Fresnel.</p>
+                            <span class="exp-tag">Mạch RLC xoay chiều</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 6: Quang học -->
+                <div class="topic-group-section">
+                    <div class="topic-header">
+                        <div class="topic-title-wrap">
+                            <span class="topic-icon">🌈</span>
+                            <h2 class="topic-title">6. Quang Học (Optics)</h2>
+                        </div>
+                        <span class="topic-count">5 thí nghiệm</span>
+                    </div>
+                    <div class="experiment-grid">
+                        <div class="exp-card" data-target="snell-refraction">
+                            <div class="exp-icon">🔦</div>
+                            <h3>Khúc Xạ & Phản Xạ Toàn Phần</h3>
+                            <p>Kiểm chứng Định luật Snell n₁ sin i = n₂ sin r và xác định góc giới hạn phản xạ toàn phần i_gh trong cáp quang.</p>
+                            <span class="exp-tag">Khúc xạ (PhET Bending)</span>
+                        </div>
+                        <div class="exp-card" data-target="geometric-optics">
+                            <div class="exp-icon">🔍</div>
+                            <h3>Quang Hình: Thấu Kính Mỏng & Gương</h3>
+                            <p>Sự tạo ảnh qua thấu kính hội tụ, phân kỳ; dựng 3 tia sáng đặc biệt và kiểm chứng công thức 1/f = 1/d + 1/d'.</p>
+                            <span class="exp-tag">Quang hình (PhET Optics)</span>
+                        </div>
+                        <div class="exp-card" data-target="young-interference">
+                            <div class="exp-icon">☀️</div>
+                            <h3>Giao Thoa Ánh Sáng (Young & Newton)</h3>
+                            <p>Đo khoảng vân i = λD/a, tính bước sóng ánh sáng và quan sát hệ vân tròn đồng tâm Newton (nêm không khí).</p>
+                            <span class="exp-tag">Giao thoa ánh sáng</span>
+                        </div>
+                        <div class="exp-card" data-target="diffraction">
+                            <div class="exp-icon">🔬</div>
+                            <h3>Nhiễu Xạ Ánh Sáng (Khe Hẹp & Đĩa Airy)</h3>
+                            <p>Hiện tượng nhiễu xạ qua một khe hẹp Fraunhofer, qua lỗ tròn (đĩa Airy) và cách mạng nhiễu xạ phân tách quang phổ.</p>
+                            <span class="exp-tag">Nhiễu xạ ánh sáng</span>
+                        </div>
+                        <div class="exp-card" data-target="polarization">
+                            <div class="exp-icon">🕶️</div>
+                            <h3>Phân Cực Ánh Sáng (Malus & Brewster)</h3>
+                            <p>Định luật Malus I = I₀ cos²θ qua 2 kính lọc phân cực và hiện tượng phân cực do phản xạ ở góc Brewster.</p>
+                            <span class="exp-tag">Sóng điện từ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 7: Vật lý hiện đại cơ bản -->
+                <div class="topic-group-section">
+                    <div class="topic-header">
+                        <div class="topic-title-wrap">
+                            <span class="topic-icon">⚛️</span>
+                            <h2 class="topic-title">7. Vật Lý Hiện Đại Cơ Bản</h2>
+                        </div>
+                        <span class="topic-count">3 thí nghiệm</span>
+                    </div>
+                    <div class="experiment-grid">
+                        <div class="exp-card" data-target="photoelectric">
+                            <div class="exp-icon">💡</div>
+                            <h3>Hiệu Ứng Quang Điện Ngoài</h3>
+                            <p>Khảo sát công thoát A, động năng cực đại K_max, điện áp hãm U_h và công thức Einstein hf = A + K_max.</p>
+                            <span class="exp-tag">Lượng tử (PhET Photoelectric)</span>
+                        </div>
+                        <div class="exp-card" data-target="blackbody">
+                            <div class="exp-icon">🔴</div>
+                            <h3>Bức Xạ Vật Đen (Wien & Stefan-Boltzmann)</h3>
+                            <p>Khảo sát phổ bức xạ nhiệt Planck, định luật dịch chuyển Wien λ_max·T = b và định luật phát xạ Stefan-Boltzmann P = σT⁴.</p>
+                            <span class="exp-tag">Quang lượng tử (PhET Blackbody)</span>
+                        </div>
+                        <div class="exp-card" data-target="bohr-rutherford">
+                            <div class="exp-icon">🪐</div>
+                            <h3>Nguyên Tử Bohr & Tán Xạ Rutherford</h3>
+                            <p>Thí nghiệm tán xạ hạt alpha trên lá vàng, các mức năng lượng Bohr E_n = -13.6/n² eV và quang phổ Hydro (Lyman, Balmer).</p>
+                            <span class="exp-tag">Hạt nhân (PhET Rutherford)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact & Author Section -->
+                <div class="home-contact-section">
+                    <div class="contact-card">
+                        <div class="contact-header">
+                            <div class="contact-avatar-wrap">
+                                <div class="contact-avatar">LNP</div>
+                                <span class="avatar-status" title="Sẵn sàng kết nối"></span>
+                            </div>
+                            <div class="contact-intro">
+                                <div class="contact-badge-wrap">
+                                    <span class="contact-badge">👨‍💻 Tác giả & Nghiên cứu phát triển</span>
+                                    <span class="contact-sub-badge">VNU - UET</span>
+                                </div>
+                                <h3 class="contact-name">Lê Ngọc Phú</h3>
+                                <p class="contact-org">🏛️ Trường Đại học Công nghệ – Đại học Quốc gia Hà Nội</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-divider"></div>
+
+                        <div class="contact-grid">
+                            <div class="contact-item">
+                                <div class="contact-item-icon">📱</div>
+                                <div class="contact-item-info">
+                                    <span class="contact-item-label">Số điện thoại liên hệ</span>
+                                    <a href="tel:0853257289" class="contact-item-value contact-link">0853257289</a>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-item-icon">📧</div>
+                                <div class="contact-item-info">
+                                    <span class="contact-item-label">Email học thuật</span>
+                                    <a href="mailto:25020994@vnu.edu.vn" class="contact-item-value contact-link">25020994@vnu.edu.vn</a>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-item-icon">⚛️</div>
+                                <div class="contact-item-info">
+                                    <span class="contact-item-label">Nền tảng trực tuyến</span>
+                                    <span class="contact-item-value">LP.VirtualLab (Phòng Thí Nghiệm Vật Lý Ảo)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-footer-bar">
+                            <span>© 2026 <strong>LP.VirtualLab</strong> • Tác giả: <strong>Lê Ngọc Phú</strong> (SĐT: <a href="tel:0853257289" class="contact-inline-link">0853257289</a> • Email: <a href="mailto:25020994@vnu.edu.vn" class="contact-inline-link">25020994@vnu.edu.vn</a>)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CÁC PHÂN HỆ THÍ NGHIỆM CHI TIẾT ==================== -->
+
+        <!-- 1. PROJECTILE -->
+        <section id="projectile" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🚀 Chuyển Động Ném Xiên & Ném Ngang</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="proj-fire" title="Bắn">🔥 Bắn</button>
+                            <button class="btn-icon" id="proj-reset" title="Đặt lại">🔄</button>
+                            <button class="btn-icon" id="proj-pause" title="Tạm dừng">⏸️</button>
+                        </div>
+                    </div>
+                    <canvas id="projectileCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="projectile-dock" data-target="projectileCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 So sánh đường nét đứt vàng (lý tưởng) với đường xanh (có lực cản không khí)!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Ý Tưởng & Hiện Tượng: Chuyển Động Ném Trong Trọng Trường</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Ý tưởng cốt lõi:</strong>
+                                <p>Phân tích chuyển động ném xiên và ném ngang thành hai chuyển động độc lập: thẳng đều theo phương ngang $x(t) = v_{0x} t$ và biến đổi đều theo phương thẳng đứng $y(t) = h_0 + v_{0y} t - \frac{1}{2} g t^2$.</p>
+                            </div>
+                            <div class="theory-block">
+                                <strong>🔍 Bản chất hiện tượng:</strong>
+                                <p>Khi góc bắn $\theta = 45^\circ$, tầm xa đạt cực đại trong trường không có lực cản ($L_{max} = \frac{v_0^2}{g}$). Khi có lực cản không khí $\vec{F}_{drag} = -\frac{1}{2} C_d \rho A v \vec{v}$, quỹ đạo không còn là parabol đối xứng mà dốc đứng hơn ở đoạn cuối.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh thông số</h3>
+                    <div class="control-group">
+                        <label>Chế độ ném</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="proj-mode" value="oblique" checked> Ném Xiên</label>
+                            <label><input type="radio" name="proj-mode" value="horizontal"> Ném Ngang</label>
+                        </div>
+                    </div>
+                    <div class="control-group" id="proj-angle-group">
+                        <label>Góc ném $\theta$: <span class="val" id="proj-angle-val">45</span>°</label>
+                        <input type="range" id="proj-angle" min="0" max="89" value="45" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Vận tốc đầu $v_0$: <span class="val" id="proj-v0-val">25</span> m/s</label>
+                        <input type="range" id="proj-v0" min="5" max="50" value="25" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Độ cao ban đầu $h_0$: <span class="val" id="proj-h0-val">0</span> m</label>
+                        <input type="range" id="proj-h0" min="0" max="40" value="0" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Gia tốc $g$: <span class="val" id="proj-g-val">9.8</span> m/s²</label>
+                        <input type="range" id="proj-g" min="1" max="25" value="9.8" step="0.1" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Lực cản không khí: <span class="val" id="proj-drag-val">Không (Lý tưởng)</span></label>
+                        <input type="range" id="proj-drag" min="0" max="0.5" value="0" step="0.05" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Dữ liệu thời gian thực</h4>
+                        <div class="data-row"><span>Độ cao hiện tại:</span><span id="proj-height">0.00 m</span></div>
+                        <div class="data-row"><span>Tầm xa hiện tại:</span><span id="proj-range">0.00 m</span></div>
+                        <div class="data-row"><span>Vận tốc tức thời $v$:</span><span id="proj-vel">0.00 m/s</span></div>
+                        <div class="data-row"><span>Tầm cao cực đại $H$:</span><span id="proj-max-h">0.00 m</span></div>
+                        <div class="data-row"><span>Thời gian bay:</span><span id="proj-flight-time">0.00 s</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức vật lý</h4>
+                        <div class="formula">$$x = (v_0 \cos\theta) t, \quad y = h_0 + (v_0 \sin\theta) t - \frac{1}{2}gt^2$$</div>
+                        <div class="formula">$$H = \frac{v_0^2 \sin^2\theta}{2g}, \quad L = \frac{v_0^2 \sin 2\theta}{g}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. NEWTON & FRICTION -->
+        <section id="newton-friction" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>📐 Định Luật Newton & Ma Sát Trên Mặt Phẳng Nghiêng</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="nf-reset" title="Đặt lại">🔄</button>
+                            <button class="btn-icon" id="nf-pause" title="Tạm dừng">⏸️</button>
+                        </div>
+                    </div>
+                    <canvas id="newtonFrictionCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="newton-friction-dock" data-target="newtonFrictionCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Khảo sát sơ đồ vector lực: Trọng lực P, Phản lực N, Lực kéo F_kéo và Ma sát F_ms!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Ý Tưởng & Hiện Tượng: Định Luật 2 Newton & Ma Sát</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Phương trình động lực học:</strong>
+                                <p>$$\sum \vec{F} = \vec{P} + \vec{N} + \vec{F}_{kéo} + \vec{F}_{ms} = m\vec{a}$$</p>
+                                <p>Chiếu lên trục song song mặt nghiêng: $F_{kéo} - mg\sin\alpha - F_{ms} = ma$.</p>
+                            </div>
+                            <div class="theory-block">
+                                <strong>🔍 Điều kiện trượt:</strong>
+                                <p>Vật chỉ bắt đầu chuyển động khi ngoại lực vượt quá lực ma sát nghỉ cực đại: $|F_{ngoại}| > F_{ms nghỉ}^{max} = \mu_s N$. Khi trượt, lực ma sát trượt là $F_{ms trượt} = \mu_k N$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh thông số</h3>
+                    <div class="control-group">
+                        <label>Khối lượng $m$: <span class="val" id="nf-mass-val">5.0</span> kg</label>
+                        <input type="range" id="nf-mass" min="1" max="20" value="5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Góc nghiêng $\alpha$: <span class="val" id="nf-alpha-val">25</span>°</label>
+                        <input type="range" id="nf-alpha" min="0" max="60" value="25" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Hệ số ma sát nghỉ $\mu_s$: <span class="val" id="nf-mus-val">0.40</span></label>
+                        <input type="range" id="nf-mus" min="0" max="1" value="0.4" step="0.05" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Hệ số ma sát trượt $\mu_k$: <span class="val" id="nf-muk-val">0.25</span></label>
+                        <input type="range" id="nf-muk" min="0" max="0.8" value="0.25" step="0.05" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Lực kéo $F_{kéo}$ (hướng lên dốc): <span class="val" id="nf-fpull-val">10.0</span> N</label>
+                        <input type="range" id="nf-fpull" min="0" max="80" value="10" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Gia tốc $g$: <span class="val" id="nf-g-val">9.8</span> m/s²</label>
+                        <input type="range" id="nf-g" min="1" max="20" value="9.8" step="0.1" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Dữ liệu thời gian thực</h4>
+                        <div class="data-row"><span>Trạng thái:</span><span id="nf-state-desc" style="color:#10b981;">Đứng yên</span></div>
+                        <div class="data-row"><span>Gia tốc $a$:</span><span id="nf-accel">0.00 m/s²</span></div>
+                        <div class="data-row"><span>Vận tốc $v$:</span><span id="nf-velocity">0.00 m/s</span></div>
+                        <div class="data-row"><span>Phản lực $N$:</span><span id="nf-norm-force">0.0 N</span></div>
+                        <div class="data-row"><span>Lực ma sát $F_{ms}$:</span><span id="nf-friction-force">0.0 N</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật Newton & Ma sát</h4>
+                        <div class="formula">$$N = mg \cos\alpha, \quad F_{ms} \le \mu_s N$$</div>
+                        <div class="formula">$$a = \frac{F_{kéo} - mg\sin\alpha - \text{sgn}(v)\mu_k N}{m}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. CIRCULAR MOTION -->
+        <section id="circular-motion" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔄 Chuyển Động Tròn Đều & Lực Hướng Tâm</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="cm-cut-string" title="Cắt dây để kiểm chứng quán tính">✂️ Cắt Dây</button>
+                            <button class="btn-icon" id="cm-reset" title="Đặt lại">🔄</button>
+                        </div>
+                    </div>
+                    <canvas id="circularMotionCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="circular-motion-dock" data-target="circularMotionCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Nhấn "Cắt Dây" để quan sát quả cầu văng ra theo phương tiếp tuyến (Định luật 1 Newton)!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Ý Tưởng & Hiện Tượng: Động Học Chuyển Động Tròn</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Bản chất gia tốc hướng tâm:</strong>
+                                <p>Dù độ lớn vận tốc dài $v = \text{const}$, nhưng hướng của vector vận tốc $\vec{v}$ liên tục thay đổi. Sự biến thiên về hướng này sinh ra gia tốc hướng tâm $\vec{a}_{ht}$ luôn vuông góc với $\vec{v}$ và hướng về tâm quay.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh thông số</h3>
+                    <div class="control-group">
+                        <label>Bán kính quỹ đạo $r$: <span class="val" id="cm-radius-val">2.80 m</span></label>
+                        <input type="range" id="cm-radius" min="60" max="200" value="140" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Vận tốc góc $\omega$: <span class="val" id="cm-omega-val">2.5 rad/s</span></label>
+                        <input type="range" id="cm-omega" min="0.5" max="6" value="2.5" step="0.1" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khối lượng $m$: <span class="val" id="cm-mass-val">1.5 kg</span></label>
+                        <input type="range" id="cm-mass" min="0.5" max="5" value="1.5" step="0.1" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Dữ liệu thời gian thực</h4>
+                        <div class="data-row"><span>Vận tốc dài $v$:</span><span id="cm-linear-v">0.00 m/s</span></div>
+                        <div class="data-row"><span>Gia tốc hướng tâm $a_{ht}$:</span><span id="cm-acp">0.00 m/s²</span></div>
+                        <div class="data-row"><span>Lực hướng tâm $F_{ht}$:</span><span id="cm-fcp">0.00 N</span></div>
+                        <div class="data-row"><span>Chu kỳ quay $T$:</span><span id="cm-period">0.00 s</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Mối liên hệ động học</h4>
+                        <div class="formula">$$v = \omega r, \quad a_{ht} = \frac{v^2}{r} = \omega^2 r$$</div>
+                        <div class="formula">$$F_{ht} = m a_{ht} = \frac{m v^2}{r}, \quad T = \frac{2\pi}{\omega}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. COLLISION -->
+        <section id="collision" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>💥 Va Chạm & Bảo Toàn Động Lượng</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="col-reset" title="Đặt lại">🔄</button>
+                        </div>
+                    </div>
+                    <canvas id="collisionCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="collision-dock" data-target="collisionCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Điều chỉnh hệ số hồi phục e: e = 1 (đàn hồi tuyệt đối), e = 0 (va chạm mềm dính vào nhau)!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Định Luật Bảo Toàn Động Lượng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Bảo toàn động lượng:</strong>
+                                <p>Trong một hệ kín không chịu ngoại lực hoặc ngoại lực triệt tiêu, tổng động lượng của hệ được bảo toàn trước và sau va chạm: $\sum \vec{p} = m_1 \vec{v}_1 + m_2 \vec{v}_2 = \text{const}$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh thông số</h3>
+                    <div class="control-group">
+                        <label>Hệ số hồi phục $e$: <span class="val" id="col-restitution-val">1.0 (Đàn hồi tuyệt đối)</span></label>
+                        <input type="range" id="col-restitution" min="0" max="1" value="1" step="0.1" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khối lượng $m_1$: <span class="val" id="col-m1-val">2.0</span> kg</label>
+                        <input type="range" id="col-m1" min="1" max="6" value="2" step="0.5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Vận tốc đầu $v_1$: <span class="val" id="col-v1-val">4.0</span> m/s</label>
+                        <input type="range" id="col-v1" min="-6" max="6" value="4" step="0.5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khối lượng $m_2$: <span class="val" id="col-m2-val">3.0</span> kg</label>
+                        <input type="range" id="col-m2" min="1" max="6" value="3" step="0.5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Vận tốc đầu $v_2$: <span class="val" id="col-v2-val">-2.0</span> m/s</label>
+                        <input type="range" id="col-v2" min="-6" max="6" value="-2" step="0.5" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Dữ liệu thời gian thực</h4>
+                        <div class="data-row"><span>Tổng động lượng $P$:</span><span id="col-total-p">0.00 kg·m/s</span></div>
+                        <div class="data-row"><span>Tổng động năng $E_k$:</span><span id="col-total-ke">0.00 J</span></div>
+                        <div class="data-row"><span>Vận tốc $v_1'$:</span><span id="col-res-v1">0.00 m/s</span></div>
+                        <div class="data-row"><span>Vận tốc $v_2'$:</span><span id="col-res-v2">0.00 m/s</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức va chạm tổng quát</h4>
+                        <div class="formula">$$v_1' = \frac{m_1 v_1 + m_2 v_2 - m_2 e(v_1 - v_2)}{m_1 + m_2}$$</div>
+                        <div class="formula">$$v_2' = \frac{m_1 v_1 + m_2 v_2 + m_1 e(v_1 - v_2)}{m_1 + m_2}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ENERGY SKATE PARK -->
+        <section id="energy-skate" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🛹 Bảo Toàn Cơ Năng - Đường Trượt Skate Park</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="skate-reset" title="Đặt lại">🔄</button>
+                        </div>
+                    </div>
+                    <canvas id="energySkateCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="energy-skate-dock" data-target="energySkateCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Quan sát sự chuyển hóa tuần hoàn giữa Thế năng Ep (xanh dương) và Động năng Ek (xanh lá)!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Chuyển Hóa Cơ Năng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Định luật bảo toàn cơ năng:</strong>
+                                <p>Khi bỏ qua ma sát, cơ năng toàn phần của người trượt không đổi: $E = E_p + E_k = mgh + \frac{1}{2}mv^2 = \text{const}$. Tại đỉnh dốc $E = E_p$, tại đáy dốc thế năng cực tiểu và động năng cực đại.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh thông số</h3>
+                    <div class="control-group">
+                        <label>Khối lượng người trượt $m$: <span class="val" id="skate-mass-val">60</span> kg</label>
+                        <input type="range" id="skate-mass" min="20" max="100" value="60" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Ma sát đường trượt: <span class="val" id="skate-friction-val">Không (Bảo toàn 100%)</span></label>
+                        <input type="range" id="skate-friction" min="0" max="0.005" value="0.001" step="0.0005" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Gia tốc $g$: <span class="val" id="skate-g-val">9.8</span> m/s²</label>
+                        <input type="range" id="skate-g" min="1" max="25" value="9.8" step="0.1" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Cân bằng năng lượng thời gian thực</h4>
+                        <div class="data-row"><span>Thế năng $E_p$:</span><span id="skate-ep">0.0 J</span></div>
+                        <div class="data-row"><span>Động năng $E_k$:</span><span id="skate-ek">0.0 J</span></div>
+                        <div class="data-row"><span>Nhiệt ma sát $E_{nhiệt}$:</span><span id="skate-eth">0.0 J</span></div>
+                        <div class="data-row"><span>Cơ năng toàn phần:</span><span id="skate-etot">0.0 J</span></div>
+                        <div class="data-row"><span>Tốc độ tức thời:</span><span id="skate-speed">0.00 m/s</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật bảo toàn cơ năng</h4>
+                        <div class="formula">$$E = E_p + E_k + E_{thermal} = \text{const}$$</div>
+                        <div class="formula">$$v = \sqrt{2g(h_0 - h)}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. BALANCING ACT -->
+        <section id="balancing-act" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>⚖️ Cân Bằng Vật Rắn & Momen Lực (Đòn Bẩy)</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="lever-lock" title="Khóa/mở chốt đòn bẩy">🔒 Khóa chốt đòn bẩy</button>
+                        </div>
+                    </div>
+                    <canvas id="balancingActCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="balancing-act-dock" data-target="balancingActCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Mở khóa chốt để quan sát thanh đòn bẩy nghiêng theo tổng momen lực!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Quy Tắc Momen Lực</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Điều kiện cân bằng quay của vật rắn:</strong>
+                                <p>Tổng các momen lực có xu hướng làm vật quay theo chiều kim đồng hồ bằng tổng các momen lực có xu hướng làm vật quay ngược chiều kim đồng hồ: $\sum M = M_1 - M_2 = m_1 g d_1 - m_2 g d_2 = 0$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh quả nặng</h3>
+                    <div class="control-group">
+                        <label>Khối lượng bên trái $m_1$: <span class="val" id="lever-m1-val">5.0</span> kg</label>
+                        <input type="range" id="lever-m1" min="1" max="20" value="5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Vị trí bên trái $d_1$: <span class="val" id="lever-d1-val">6</span> khấc</label>
+                        <input type="range" id="lever-d1" min="1" max="10" value="6" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khối lượng bên phải $m_2$: <span class="val" id="lever-m2-val">10.0</span> kg</label>
+                        <input type="range" id="lever-m2" min="1" max="20" value="10" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Vị trí bên phải $d_2$: <span class="val" id="lever-d2-val">3</span> khấc</label>
+                        <input type="range" id="lever-d2" min="1" max="10" value="3" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Cân bằng momen lực</h4>
+                        <div class="data-row"><span>Trạng thái:</span><span id="lever-status" style="color:#10b981;">Cân bằng</span></div>
+                        <div class="data-row"><span>Momen trái $M_1$:</span><span id="lever-t-ccw">0.0 N·m</span></div>
+                        <div class="data-row"><span>Momen phải $M_2$:</span><span id="lever-t-cw">0.0 N·m</span></div>
+                        <div class="data-row"><span>Momen tổng hợp:</span><span id="lever-t-net">0.0 N·m</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Quy tắc cân bằng quay</h4>
+                        <div class="formula">$$M = F \cdot d = m g d$$</div>
+                        <div class="formula">$$\sum M = 0 \iff m_1 d_1 = m_2 d_2$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ROTATIONAL INERTIA -->
+        <section id="rotational-inertia" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>💫 Chuyển Động Quay & Momen Quán Tính</h2>
+                    </div>
+                    <canvas id="rotationalInertiaCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="rotational-inertia-dock" data-target="rotationalInertiaCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Thu hẹp bán kính quả nặng r để quan sát vận tốc góc ω tăng vọt (Hiệu ứng người trượt băng nghệ thuật)!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Momen Quán Tính & Momen Động Lượng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Bảo toàn momen động lượng:</strong>
+                                <p>Khi không có momen ngoại lực tác dụng ($\tau_{ext} = 0$), momen động lượng của hệ được bảo toàn: $L = I \omega = \text{const}$. Khi thu nhỏ bán kính $r$, momen quán tính $I = mr^2$ giảm, kéo theo vận tốc góc $\omega$ tăng tỷ lệ nghịch.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh phân bố khối lượng</h3>
+                    <div class="control-group">
+                        <label>Khoảng cách quả nặng tới trục $r$: <span class="val" id="rot-radius-val">2.00 m</span></label>
+                        <input type="range" id="rot-radius" min="40" max="180" value="100" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khối lượng mỗi quả $m$: <span class="val" id="rot-mass-val">5.0 kg</span></label>
+                        <input type="range" id="rot-mass" min="1" max="15" value="5" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Dữ liệu động học quay</h4>
+                        <div class="data-row"><span>Momen quán tính $I$:</span><span id="rot-inertia">0.000 kg·m²</span></div>
+                        <div class="data-row"><span>Vận tốc góc $\omega$:</span><span id="rot-omega">0.00 rad/s</span></div>
+                        <div class="data-row"><span>Momen động lượng $L$:</span><span id="rot-angular-l">0.00 J·s (const)</span></div>
+                        <div class="data-row"><span>Động năng quay $E_{rot}$:</span><span id="rot-energy">0.0 J</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức chuyển động quay</h4>
+                        <div class="formula">$$I = \sum m_i r_i^2, \quad L = I \omega = \text{const}$$</div>
+                        <div class="formula">$$E_{rot} = \frac{1}{2} I \omega^2$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. GAS PROPERTIES -->
+        <section id="gas-properties" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🌡️ Phương Trình Trạng Thái Khí Lý Tưởng (P-V-T)</h2>
+                    </div>
+                    <canvas id="gasPropertiesCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="gas-properties-dock" data-target="gasPropertiesCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Dùng chuột kéo piston sang trái/phải để thay đổi thể tích V; thay đổi nhiệt độ T để đo áp suất P!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Các Định Luật Khí Lý Tưởng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Phương trình Clapeyron-Mendeleev:</strong>
+                                <p>$$P \cdot V = n R T = N k_B T$$</p>
+                                <p>Định luật Boyle-Mariotte (đẳng nhiệt $T = \text{const}$): $P \cdot V = \text{const}$.</p>
+                                <p>Định luật Charles (đẳng áp $P = \text{const}$): $V / T = \text{const}$.</p>
+                                <p>Định luật Gay-Lussac (đẳng tích $V = \text{const}$): $P / T = \text{const}$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh thông số</h3>
+                    <div class="control-group">
+                        <label>Nhiệt độ $T$: <span class="val" id="gp-temp-val">300 K</span></label>
+                        <input type="range" id="gp-temp" min="100" max="600" value="300" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Số phân tử khí $N$: <span class="val" id="gp-particles-val">100</span></label>
+                        <input type="range" id="gp-particles" min="20" max="250" value="100" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Thông số trạng thái thời gian thực</h4>
+                        <div class="data-row"><span>Áp suất $P$:</span><span id="gp-pressure-val">1.00 atm</span></div>
+                        <div class="data-row"><span>Thể tích $V$:</span><span id="gp-volume-val">17.0 L</span></div>
+                        <div class="data-row"><span>Động năng trung bình:</span><span id="gp-mean-ke">E_k = 3/2 kB T</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Phương trình trạng thái</h4>
+                        <div class="formula">$$P V = n R T$$</div>
+                        <div class="formula">$$\bar{\epsilon}_k = \frac{3}{2} k_B T$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. MAXWELL BOLTZMANN -->
+        <section id="maxwell-boltzmann" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>📊 Động Học Phân Tử & Phân Bố Maxwell-Boltzmann</h2>
+                    </div>
+                    <canvas id="maxwellBoltzmannCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="maxwell-boltzmann-dock" data-target="maxwellBoltzmannCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 So sánh histogram vận tốc thực tế của các phân tử với đường cong lý thuyết Maxwell-Boltzmann!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Phân Bố Vận Tốc Thống Kê</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Hàm phân bố Maxwell-Boltzmann:</strong>
+                                <p>$$f(v) = 4\pi \left(\frac{m}{2\pi k_B T}\right)^{3/2} v^2 \exp\left(-\frac{mv^2}{2k_B T}\right)$$</p>
+                                <p>Khi nhiệt độ $T$ tăng, đỉnh phổ dịch chuyển sang bên phải (vận tốc tăng) và đường cong bẹt thấp xuống.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh nhiệt độ & Khối lượng mol</h3>
+                    <div class="control-group">
+                        <label>Loại khí</label>
+                        <select id="mb-gas-type" class="control-select">
+                            <option value="4">Heli (He - M = 4 g/mol)</option>
+                            <option value="28" selected>Nitơ (N₂ - M = 28 g/mol)</option>
+                            <option value="40">Argon (Ar - M = 40 g/mol)</option>
+                            <option value="131">Xenon (Xe - M = 131 g/mol)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Nhiệt độ $T$: <span class="val" id="mb-temp-val">300 K</span></label>
+                        <input type="range" id="mb-temp" min="100" max="1000" value="300" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Các vận tốc đặc trưng</h4>
+                        <div class="data-row"><span>Vận tốc xác suất lớn nhất $v_{xs}$:</span><span id="mb-v-mp">0 m/s</span></div>
+                        <div class="data-row"><span>Vận tốc trung bình $\bar{v}$:</span><span id="mb-v-avg">0 m/s</span></div>
+                        <div class="data-row"><span>Vận tốc căn quân phương $v_{rms}$:</span><span id="mb-v-rms">0 m/s</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Vận tốc thống kê</h4>
+                        <div class="formula">$$v_{xs} = \sqrt{\frac{2RT}{M}}, \quad \bar{v} = \sqrt{\frac{8RT}{\pi M}}, \quad v_{rms} = \sqrt{\frac{3RT}{M}}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. CARNOT CYCLE -->
+        <section id="carnot-cycle" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>⚙️ Các Quá Trình Nhiệt Động & Chu Trình Carnot</h2>
+                    </div>
+                    <canvas id="carnotCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="carnot-cycle-dock" data-target="carnotCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Quan sát 4 giai đoạn hoạt động của xilanh piston đồng bộ trên giản đồ áp suất - thể tích P-V!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Chu Trình Carnot & Hiệu Suất Động Cơ Nhiệt</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 4 Quá trình khép kín:</strong>
+                                <p>1. Giãn đẳng nhiệt ở $T_H$ (thu nhiệt $Q_H$).</p>
+                                <p>2. Giãn đoạn nhiệt (sinh công, nhiệt độ giảm $T_H \to T_C$).</p>
+                                <p>3. Nén đẳng nhiệt ở $T_C$ (nhả nhiệt $Q_C$).</p>
+                                <p>4. Nén đoạn nhiệt (nhiệt độ tăng trở lại $T_C \to T_H$).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Nhiệt độ 2 nguồn nhiệt</h3>
+                    <div class="control-group">
+                        <label>Nguồn nóng $T_H$: <span class="val" id="carnot-th-val">600 K</span></label>
+                        <input type="range" id="carnot-th" min="400" max="900" value="600" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Nguồn lạnh $T_C$: <span class="val" id="carnot-tc-val">300 K</span></label>
+                        <input type="range" id="carnot-tc" min="150" max="380" value="300" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Hiệu suất & Giai đoạn hiện tại</h4>
+                        <div class="data-row"><span>Giai đoạn:</span><span id="carnot-step-name" style="color:#38bdf8;">1-2: Giãn đẳng nhiệt Th</span></div>
+                        <div class="data-row"><span>Hiệu suất Carnot cực đại:</span><span id="carnot-eta" style="color:#10b981; font-weight:bold;">50.0 %</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định lý Carnot</h4>
+                        <div class="formula">$$\eta = \frac{W}{Q_H} = 1 - \frac{T_C}{T_H}$$</div>
+                        <p class="formula-note">Không một động cơ nhiệt nào hoạt động giữa hai nguồn nhiệt có hiệu suất vượt qua hiệu suất Carnot.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. HARMONIC -->
+        <section id="harmonic" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🎯 Dao Động Điều Hòa: Con Lắc Lò Xo & Con Lắc Đơn</h2>
+                    </div>
+                    <canvas id="harmonicCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="harmonic-dock" data-target="harmonicCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Chuyển đổi giữa Con lắc lò xo và Con lắc đơn để đối sánh chu kỳ dao động T!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Phương Trình Dao Động Điều Hòa</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Chu kỳ dao động riêng:</strong>
+                                <p>Con lắc lò xo: $T = 2\pi\sqrt{\frac{m}{k}}$ (phụ thuộc khối lượng $m$ và độ cứng $k$).</p>
+                                <p>Con lắc đơn: $T = 2\pi\sqrt{\frac{L}{g}}$ (chỉ phụ thuộc chiều dài dây $L$ và $g$, không phụ thuộc khối lượng quả nặng $m$).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Lựa chọn hệ dao động</h3>
+                    <div class="control-group">
+                        <label>Loại con lắc</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="hm-mode" value="spring" checked> Con Lắc Lò Xo</label>
+                            <label><input type="radio" name="hm-mode" value="pendulum"> Con Lắc Đơn</label>
+                        </div>
+                    </div>
+                    <div id="hm-spring-controls">
+                        <div class="control-group">
+                            <label>Độ cứng lò xo $k$: <span class="val" id="hm-k-val">50 N/m</span></label>
+                            <input type="range" id="hm-k" min="10" max="150" value="50" class="slider">
+                        </div>
+                    </div>
+                    <div id="hm-pendulum-controls" style="display:none;">
+                        <div class="control-group">
+                            <label>Chiều dài dây $L$: <span class="val" id="hm-len-val">1.50 m</span></label>
+                            <input type="range" id="hm-len" min="0.5" max="3" value="1.5" step="0.1" class="slider">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Khối lượng $m$: <span class="val" id="hm-mass-val">2.0 kg</span></label>
+                        <input type="range" id="hm-mass" min="0.5" max="8" value="2" step="0.5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Biên độ dao động $A$: <span class="val" id="hm-amp-val">0.40 m</span></label>
+                        <input type="range" id="hm-amp" min="0.1" max="0.8" value="0.4" step="0.05" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Gia tốc $g$: <span class="val" id="hm-g-val">9.8 m/s²</span></label>
+                        <input type="range" id="hm-g" min="1" max="25" value="9.8" step="0.1" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Đại lượng động học</h4>
+                        <div class="data-row"><span>Chu kỳ $T$:</span><span id="hm-period">0.00 s</span></div>
+                        <div class="data-row"><span>Tần số $f$:</span><span id="hm-freq">0.00 Hz</span></div>
+                        <div class="data-row"><span>Tần số góc $\omega$:</span><span id="hm-omega">0.00 rad/s</span></div>
+                        <div class="data-row"><span>Li độ tức thời $x$:</span><span id="hm-disp">0.000 m</span></div>
+                        <div class="data-row"><span>Vận tốc $v$:</span><span id="hm-vel">0.00 m/s</span></div>
+                        <div class="data-row"><span>Gia tốc $a$:</span><span id="hm-acc">0.00 m/s²</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức chu kỳ</h4>
+                        <div class="formula">$$T_{lò xo} = 2\pi\sqrt{\frac{m}{k}}, \quad T_{đơn} = 2\pi\sqrt{\frac{L}{g}}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 12. RESONANCE -->
+        <section id="resonance" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔔 Dao Động Tắt Dần & Hiện Tượng Cộng Hưởng</h2>
+                    </div>
+                    <canvas id="resonanceCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="resonance-dock" data-target="resonanceCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Kéo tần số ngoại lực Ω gần bằng tần số riêng ω₀ để kích hoạt hiện tượng CỘNG HƯỞNG cực đại!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Hiện Tượng Cộng Hưởng Cơ Học</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Phương trình vi phân dao động cưỡng bức:</strong>
+                                <p>$$\ddot{x} + 2\gamma \dot{x} + \omega_0^2 x = \frac{F_0}{m} \cos(\Omega t)$$</p>
+                                <p>Biên độ xác lập đạt cực đại khi tần số lực kích thích bằng tần số riêng: $\Omega \approx \omega_0$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh lực cưỡng bức & Cản</h3>
+                    <div class="control-group">
+                        <label>Tần số ngoại lực $\Omega$: <span class="val" id="res-drive-omega-val">5.0 rad/s</span></label>
+                        <input type="range" id="res-drive-omega" min="1" max="10" value="5" step="0.1" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Tần số riêng $\omega_0$: <span class="val" id="res-omega0-val">5.0 rad/s</span></label>
+                        <input type="range" id="res-omega0" min="2" max="8" value="5" step="0.2" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Hệ số tắt dần $\gamma$: <span class="val" id="res-gamma-val">0.30</span></label>
+                        <input type="range" id="res-gamma" min="0.05" max="1.5" value="0.3" step="0.05" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Biên độ ngoại lực $F_0$: <span class="val" id="res-f0-val">10.0 N</span></label>
+                        <input type="range" id="res-f0" min="2" max="30" value="10" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Trạng thái dao động</h4>
+                        <div class="data-row"><span>Trạng thái:</span><span id="res-status" style="font-weight:bold;">Bình thường</span></div>
+                        <div class="data-row"><span>Biên độ xác lập $A$:</span><span id="res-amplitude">0.00 cm</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Đường cong đáp ứng biên độ</h4>
+                        <div class="formula">$$A(\Omega) = \frac{F_0/m}{\sqrt{(\omega_0^2 - \Omega^2)^2 + 4\gamma^2\Omega^2}}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 13. WAVES STANDING -->
+        <section id="waves-standing" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🎻 Sóng Cơ, Giao Thoa & Sóng Dừng Trên Dây</h2>
+                    </div>
+                    <canvas id="wavesInterferenceCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="waves-standing-dock" data-target="wavesInterferenceCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Khảo sát sự hình thành nút sóng (biên độ = 0) và bụng sóng (biên độ cực đại 2A)!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Bản Chất Sóng Dừng & Giao Thoa</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Điều kiện sóng dừng trên dây hai đầu cố định:</strong>
+                                <p>Chiều dài dây bằng số nguyên lần nửa bước sóng: $L = n \frac{\lambda}{2}$ với $n = 1, 2, 3...$ là số bụng sóng (số nút sóng bằng $n + 1$).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Chọn chế độ sóng</h3>
+                    <div class="control-group">
+                        <label>Chế độ khảo sát</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="wave-type" value="standing" checked> Sóng Dừng</label>
+                            <label><input type="radio" name="wave-type" value="interference"> Giao Thoa Nước</label>
+                            <label><input type="radio" name="wave-type" value="traveling"> Sóng Truyền</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Bậc họa ba $n$ (số bụng sóng): <span class="val" id="wave-harmonics-val">3</span></label>
+                        <input type="range" id="wave-harmonics" min="1" max="6" value="3" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Tần số sóng $f$: <span class="val" id="wave-freq-val">2.0 Hz</span></label>
+                        <input type="range" id="wave-freq" min="0.5" max="5" value="2" step="0.2" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Biên độ $A$: <span class="val" id="wave-amp-val">40 mm</span></label>
+                        <input type="range" id="wave-amp" min="10" max="60" value="40" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Thông số sóng dừng</h4>
+                        <div class="data-row"><span>Số nút sóng:</span><span id="wave-nodes-count">4</span></div>
+                        <div class="data-row"><span>Số bụng sóng:</span><span id="wave-antinodes-count">3</span></div>
+                        <div class="data-row"><span>Bước sóng $\lambda$:</span><span id="wave-lambda-val">0.80 m</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Phương trình sóng dừng</h4>
+                        <div class="formula">$$u(x, t) = 2A \sin\left(\frac{2\pi x}{\lambda}\right) \cos(\omega t)$$</div>
+                        <div class="formula">$$L = n \frac{\lambda}{2} \iff f_n = n \frac{v}{2L}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 14. COULOMB FIELD -->
+        <section id="coulomb-field" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔵 Định Luật Coulomb & Điện Trường Tĩnh</h2>
+                    </div>
+                    <canvas id="coulombCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="coulomb-field-dock" data-target="coulombCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Kéo thả trực tiếp điện tích dương/âm hoặc cảm biến đo điện thế V bằng chuột!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Tương Tác Tĩnh Điện & Vector Điện Trường</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Định luật Coulomb:</strong>
+                                <p>Lực tương tác tĩnh điện giữa hai điện tích điểm: $F = k \frac{|q_1 q_2|}{r^2}$. Đường sức điện trường hướng ra xa điện tích dương và hướng về điện tích âm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điện tích điểm</h3>
+                    <div class="control-group">
+                        <label>Điện tích $q_1$: <span class="val" id="coulomb-q1-val">+2.0 nC</span></label>
+                        <input type="range" id="coulomb-q1" min="-5" max="5" value="2" step="0.5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Điện tích $q_2$: <span class="val" id="coulomb-q2-val">-2.0 nC</span></label>
+                        <input type="range" id="coulomb-q2" min="-5" max="5" value="-2" step="0.5" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Lực tương tác & Cảm biến đo</h4>
+                        <div class="data-row"><span>Khoảng cách giữa $q_1, q_2$:</span><span id="coulomb-dist">2.20 m</span></div>
+                        <div class="data-row"><span>Lực Coulomb $F$:</span><span id="coulomb-force">7.43 μN</span></div>
+                        <div class="data-row"><span>Điện thế tại cảm biến $V$:</span><span id="coulomb-voltage">0.0 V</span></div>
+                        <div class="data-row"><span>Cường độ điện trường $E$:</span><span id="coulomb-efield">0.0 V/m</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật Coulomb & Điện trường</h4>
+                        <div class="formula">$$F = k \frac{|q_1 q_2|}{r^2}, \quad \vec{E} = \sum \frac{k q_i}{r_i^2} \hat{r}_i$$</div>
+                        <div class="formula">$$V = \sum \frac{k q_i}{r_i}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 15. CAPACITOR -->
+        <section id="capacitor" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔋 Tụ Điện Phẳng & Hằng Số Điện Môi</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="cap-discharge" title="Phóng điện qua bóng đèn">💡 Phóng Điện</button>
+                        </div>
+                    </div>
+                    <canvas id="capacitorCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="capacitor-dock" data-target="capacitorCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Nhấn "Phóng Điện" để giải phóng năng lượng tích trữ trong tụ điện làm sáng bóng đèn!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Điện Dung Của Tụ Điện Phẳng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Công thức điện dung:</strong>
+                                <p>$$C = \frac{\varepsilon \varepsilon_0 S}{d}$$</p>
+                                <p>Khi chèn chất điện môi hằng số $\varepsilon > 1$, điện dung tăng gấp $\varepsilon$ lần, giúp tích trữ lượng điện tích và năng lượng điện trường lớn hơn tại cùng hiệu điện thế.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Kích thước bản tụ & Điện môi</h3>
+                    <div class="control-group">
+                        <label>Diện tích bản tụ $S$: <span class="val" id="cap-area-val">200 mm²</span></label>
+                        <input type="range" id="cap-area" min="100" max="400" value="200" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khoảng cách $d$: <span class="val" id="cap-dist-val">6.0 mm</span></label>
+                        <input type="range" id="cap-dist" min="2" max="10" value="6" step="0.5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Chất điện môi $\varepsilon$</label>
+                        <select id="cap-dielectric" class="control-select">
+                            <option value="1.0">Chân không / Không khí (ε = 1.0)</option>
+                            <option value="2.1">Teflon (ε = 2.1)</option>
+                            <option value="3.5">Giấy tẩm dầu (ε = 3.5)</option>
+                            <option value="5.0">Thủy tinh Pyrex (ε = 5.0)</option>
+                            <option value="80.0">Nước nguyên chất (ε = 80.0)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Điện áp nguồn nạp $U$: <span class="val" id="cap-voltage-val">1.5 V</span></label>
+                        <input type="range" id="cap-voltage" min="0.5" max="3" value="1.5" step="0.1" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Đại lượng điện tích & Năng lượng</h4>
+                        <div class="data-row"><span>Điện dung $C$:</span><span id="cap-capacitance">0.00 pF</span></div>
+                        <div class="data-row"><span>Điện tích tích trữ $Q$:</span><span id="cap-charge">0.00 pC</span></div>
+                        <div class="data-row"><span>Năng lượng điện trường $W$:</span><span id="cap-energy">0.00 pJ</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức năng lượng tụ điện</h4>
+                        <div class="formula">$$Q = C U, \quad W = \frac{1}{2} C U^2 = \frac{Q^2}{2C}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 16. CIRCUIT DC -->
+        <section id="circuit-dc" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔌 Mạch Điện D.C. & Các Định Luật Kirchhoff</h2>
+                    </div>
+                    <canvas id="circuitCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="circuit-dc-dock" data-target="circuitCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Quan sát dòng electron di chuyển trong dây dẫn và đối chiếu với ampe kế & vôn kế!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Các Định Luật Kirchhoff & Định Luật Ohm</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Định luật nút (KCL) & Định luật mắt (KVL):</strong>
+                                <p>Định luật nút dòng điện: Tổng đại số các dòng điện tại một nút bằng 0: $\sum I_{vào} = \sum I_{ra}$.</p>
+                                <p>Định luật mắt điện áp: Trong một vòng kín, tổng suất điện động bằng tổng các sụt áp: $\sum E = \sum I R$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Cấu hình mạch điện</h3>
+                    <div class="control-group">
+                        <label>Cấu hình mắc</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="dc-type" value="series" checked> Nối Tiếp</label>
+                            <label><input type="radio" name="dc-type" value="parallel"> Song Song</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Điện áp nguồn $E$: <span class="val" id="dc-voltage-val">12.0 V</span></label>
+                        <input type="range" id="dc-voltage" min="3" max="24" value="12" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Điện trở $R_1$: <span class="val" id="dc-r1-val">10 Ω</span></label>
+                        <input type="range" id="dc-r1" min="5" max="50" value="10" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Điện trở $R_2$: <span class="val" id="dc-r2-val">20 Ω</span></label>
+                        <input type="range" id="dc-r2" min="5" max="50" value="20" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Đo đạc thông số mạch</h4>
+                        <div class="data-row"><span>Điện trở tương đương $R_{tđ}$:</span><span id="dc-req">0.00 Ω</span></div>
+                        <div class="data-row"><span>Dòng điện toàn mạch $I$:</span><span id="dc-itot">0.00 A</span></div>
+                        <div class="data-row"><span>Hiệu điện thế $U_1$:</span><span id="dc-u1">0.0 V</span></div>
+                        <div class="data-row"><span>Hiệu điện thế $U_2$:</span><span id="dc-u2">0.0 V</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật Ohm & Mắc điện trở</h4>
+                        <div class="formula">$$R_{nt} = R_1 + R_2, \quad \frac{1}{R_{ss}} = \frac{1}{R_1} + \frac{1}{R_2}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 17. LORENTZ FORCE -->
+        <section id="lorentz-force" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🧲 Từ Trường & Lực Lorentz Tác Dụng Lên Hạt</h2>
+                    </div>
+                    <canvas id="lorentzCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="lorentz-force-dock" data-target="lorentzCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Từ trường B hướng vuông góc vào trong màn hình; lực Lorentz FL uốn cong quỹ đạo hạt thành đường tròn!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Tác Dụng Của Lực Từ Lorentz</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Công thức lực Lorentz:</strong>
+                                <p>$$\vec{F}_L = q(\vec{v} \times \vec{B})$$</p>
+                                <p>Vì lực Lorentz luôn vuông góc với vector vận tốc $\vec{v}$, nó không sinh công ($A = 0$), động năng và tốc độ của hạt không đổi. Lực đóng vai trò lực hướng tâm uốn cong quỹ đạo với bán kính cyclotron $R = \frac{mv}{|q|B}$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh từ trường & Hạt</h3>
+                    <div class="control-group">
+                        <label>Độ lớn từ trường $B$: <span class="val" id="lorentz-b-val">1.2 T</span></label>
+                        <input type="range" id="lorentz-b" min="0.2" max="3" value="1.2" step="0.1" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Vận tốc đầu $v_0$: <span class="val" id="lorentz-v-val">25 m/s</span></label>
+                        <input type="range" id="lorentz-v" min="10" max="50" value="25" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Điện tích hạt $q$: <span class="val" id="lorentz-q-val">+1.0 C</span></label>
+                        <input type="range" id="lorentz-q" min="-2" max="2" value="1" step="0.5" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Thông số quỹ đạo Cyclotron</h4>
+                        <div class="data-row"><span>Bán kính quỹ đạo $R$:</span><span id="lorentz-radius">0.00 m</span></div>
+                        <div class="data-row"><span>Chu kỳ quay cyclotron $T$:</span><span id="lorentz-period">0.00 s</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Bán kính & Chu kỳ Cyclotron</h4>
+                        <div class="formula">$$R = \frac{m v}{|q| B}, \quad T = \frac{2\pi m}{|q| B}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 18. FARADAY INDUCTION -->
+        <section id="faraday" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🌀 Hiện Tượng Cảm Ứng Điện Từ (Faraday & Lenz)</h2>
+                    </div>
+                    <canvas id="faradayCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="faraday-dock" data-target="faradayCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Dùng chuột kéo thanh nam châm ra vào cuộn dây để quan sát kim điện kế G lệch theo định luật Lenz!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Định Luật Cảm Ứng Faraday & Định Luật Lenz</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Suất điện động cảm ứng:</strong>
+                                <p>$$e_c = -N \frac{d\Phi}{dt}$$</p>
+                                <p>Dấu âm thể hiện định luật Lenz: dòng điện cảm ứng có chiều sao cho từ trường do nó sinh ra có tác dụng chống lại sự biến thiên của từ thông ban đầu sinh ra nó.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Điều chỉnh cuộn dây</h3>
+                    <div class="control-group">
+                        <label>Số vòng dây $N$: <span class="val" id="faraday-turns-val">10 vòng</span></label>
+                        <input type="range" id="faraday-turns" min="4" max="20" value="10" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Đo suất điện động cảm ứng</h4>
+                        <div class="data-row"><span>Suất điện động $e_c$:</span><span id="faraday-emf" style="color:#ef4444; font-weight:bold;">0.00 V</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật cảm ứng Faraday</h4>
+                        <div class="formula">$$\Phi = B \cdot S \cdot \cos\theta, \quad e_c = -N \frac{\Delta\Phi}{\Delta t}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 19. RLC AC -->
+        <section id="rlc-ac" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>⚡ Mạch Điện Xoay Chiều A.C. RLC Nối Tiếp</h2>
+                    </div>
+                    <canvas id="rlcCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="rlc-ac-dock" data-target="rlcCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Khảo sát sự lệch pha giữa điện áp u(t) và dòng điện i(t) cùng giản đồ vector Fresnel quay!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Cộng Hưởng Điện Trong Mạch RLC</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Điều kiện cộng hưởng điện:</strong>
+                                <p>Khi cảm kháng bằng dung kháng: $Z_L = Z_C \iff \omega L = \frac{1}{\omega C}$. Khi đó tổng trở cực tiểu $Z = R$, cường độ dòng điện cực đại và điện áp cùng pha với dòng điện ($\varphi = 0$).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Linh kiện mạch RLC</h3>
+                    <div class="control-group">
+                        <label>Điện trở $R$: <span class="val" id="rlc-r-val">40 Ω</span></label>
+                        <input type="range" id="rlc-r" min="10" max="100" value="40" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Độ tự cảm $L$: <span class="val" id="rlc-l-val">0.20 H</span></label>
+                        <input type="range" id="rlc-l" min="0.05" max="0.5" value="0.2" step="0.02" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Điện dung $C$: <span class="val" id="rlc-c-val">100 μF</span></label>
+                        <input type="range" id="rlc-c" min="20" max="250" value="100" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Tần số nguồn xoay chiều $f$: <span class="val" id="rlc-freq-val">50.0 Hz</span></label>
+                        <input type="range" id="rlc-freq" min="20" max="120" value="50" step="1" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Trở kháng & Độ lệch pha</h4>
+                        <div class="data-row"><span>Cảm kháng $Z_L$:</span><span id="rlc-zl">0.0 Ω</span></div>
+                        <div class="data-row"><span>Dung kháng $Z_C$:</span><span id="rlc-zc">0.0 Ω</span></div>
+                        <div class="data-row"><span>Tổng trở $Z$:</span><span id="rlc-ztot">0.0 Ω</span></div>
+                        <div class="data-row"><span>Độ lệch pha $\varphi$:</span><span id="rlc-phi">0.0°</span></div>
+                        <div class="data-row"><span>Tần số cộng hưởng $f_0$:</span><span id="rlc-f0" style="color:#10b981; font-weight:bold;">0.0 Hz</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Tổng trở & Pha</h4>
+                        <div class="formula">$$Z = \sqrt{R^2 + (Z_L - Z_C)^2}, \quad \tan\varphi = \frac{Z_L - Z_C}{R}$$</div>
+                        <div class="formula">$$f_0 = \frac{1}{2\pi\sqrt{LC}}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 20. SNELL REFRACTION -->
+        <section id="snell-refraction" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔦 Khúc Xạ & Phản Xạ Toàn Phần (Snell's Law)</h2>
+                    </div>
+                    <canvas id="snellCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="snell-refraction-dock" data-target="snellCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Tăng góc tới i vượt qua góc giới hạn igh khi n1 > n2 để quan sát hiện tượng phản xạ toàn phần 100%!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Định Luật Khúc Xạ Snell</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Công thức Snell & Phản xạ toàn phần:</strong>
+                                <p>$$n_1 \sin i = n_2 \sin r$$</p>
+                                <p>Khi ánh sáng truyền từ môi trường chiết quang hơn sang kém hơn ($n_1 > n_2$), góc khúc xạ $r > i$. Khi $\sin r = 1$, góc tới đạt giá trị giới hạn phản xạ toàn phần: $i_{gh} = \arcsin(n_2 / n_1)$. Khi $i > i_{gh}$, tia khúc xạ biến mất và toàn bộ ánh sáng phản xạ trở lại.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Chiết suất & Góc tới</h3>
+                    <div class="control-group">
+                        <label>Chiết suất môi trường 1 ($n_1$): <span class="val" id="snell-n1-val">1.00</span></label>
+                        <input type="range" id="snell-n1" min="1" max="2.4" value="1" step="0.05" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Chiết suất môi trường 2 ($n_2$): <span class="val" id="snell-n2-val">1.50</span></label>
+                        <input type="range" id="snell-n2" min="1" max="2.4" value="1.5" step="0.05" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Góc tới $i$: <span class="val" id="snell-angle-val">45°</span></label>
+                        <input type="range" id="snell-angle" min="0" max="89" value="45" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Góc khúc xạ & Trạng thái</h4>
+                        <div class="data-row"><span>Góc khúc xạ $r$:</span><span id="snell-r-angle">0.0°</span></div>
+                        <div class="data-row"><span>Góc giới hạn $i_{gh}$:</span><span id="snell-igh">0.0°</span></div>
+                        <div class="data-row"><span>Trạng thái:</span><span id="snell-status" style="color:#10b981;">Bình thường</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật Snell</h4>
+                        <div class="formula">$$n_1 \sin i = n_2 \sin r, \quad \sin i_{gh} = \frac{n_2}{n_1} \quad (n_1 > n_2)$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 21. GEOMETRIC OPTICS -->
+        <section id="geometric-optics" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔍 Quang Hình: Thấu Kính Mỏng & Gương Cầu</h2>
+                    </div>
+                    <canvas id="opticsCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="geometric-optics-dock" data-target="opticsCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Kéo thả mũi tên vật sáng AB sang trái/phải để khảo sát sự dịch chuyển của ảnh A'B'!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Công Thức Thấu Kính Gauss</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Công thức tạo ảnh:</strong>
+                                <p>$$\frac{1}{f} = \frac{1}{d} + \frac{1}{d'}, \quad k = -\frac{d'}{d} = \frac{\overline{A'B'}}{\overline{AB}}$$</p>
+                                <p>Thấu kính hội tụ ($f > 0$): khi $d > f$ cho ảnh thật ngược chiều; khi $d < f$ cho ảnh ảo cùng chiều lớn hơn vật.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Tiêu cự & Loại thấu kính</h3>
+                    <div class="control-group">
+                        <label>Loại thấu kính</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="optics-type" value="convex" checked> Hội Tụ (f > 0)</label>
+                            <label><input type="radio" name="optics-type" value="concave"> Phân Kỳ (f &lt; 0)</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Độ lớn tiêu cự $|f|$: <span class="val" id="optics-f-val">+10.0 cm</span></label>
+                        <input type="range" id="optics-f" min="40" max="180" value="100" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Chiều cao vật $h$: <span class="val" id="optics-h-val">5.0 cm</span></label>
+                        <input type="range" id="optics-h" min="20" max="80" value="50" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Vị trí ảnh & Độ phóng đại</h4>
+                        <div class="data-row"><span>Khoảng cách vật $d$:</span><span id="optics-d-val">18.0 cm</span></div>
+                        <div class="data-row"><span>Khoảng cách ảnh $d'$:</span><span id="optics-dprime">0.0 cm</span></div>
+                        <div class="data-row"><span>Độ phóng đại $k$:</span><span id="optics-k">0.00</span></div>
+                        <div class="data-row"><span>Tính chất ảnh:</span><span id="optics-status" style="color:#10b981;">Ảnh thật</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức thấu kính mỏng</h4>
+                        <div class="formula">$$d' = \frac{d \cdot f}{d - f}, \quad k = -\frac{d'}{d}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 22. YOUNG INTERFERENCE -->
+        <section id="young-interference" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>☀️ Giao Thoa Ánh Sáng: Thí Nghiệm Young & Vòng Tròn Newton</h2>
+                    </div>
+                    <canvas id="youngCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="young-interference-dock" data-target="youngCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Khảo sát hệ vân giao thoa thực tế trên màn quan sát và đo khoảng vân i!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Giao Thoa Sóng Ánh Sáng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Khoảng vân giao thoa khe Young:</strong>
+                                <p>Khoảng cách giữa hai vân sáng liên tiếp: $i = \frac{\lambda D}{a}$. Thí nghiệm chứng minh bản chất sóng của ánh sáng do Thomas Young thực hiện năm 1801.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Thông số giao thoa</h3>
+                    <div class="control-group">
+                        <label>Chế độ khảo sát</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="young-mode" value="young" checked> Khe Young</label>
+                            <label><input type="radio" name="young-mode" value="newton"> Vòng Tròn Newton</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Bước sóng ánh sáng $\lambda$: <span class="val" id="young-lambda-val">632 nm</span></label>
+                        <input type="range" id="young-lambda" min="380" max="750" value="632" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khoảng cách 2 khe $a$: <span class="val" id="young-a-val">0.50 mm</span></label>
+                        <input type="range" id="young-a" min="0.2" max="1.5" value="0.5" step="0.05" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Khoảng cách tới màn $D$: <span class="val" id="young-d-val">1.50 m</span></label>
+                        <input type="range" id="young-d" min="0.5" max="3" value="1.5" step="0.1" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Khoảng vân tính toán</h4>
+                        <div class="data-row"><span>Khoảng vân $i$:</span><span id="young-fringe-i" style="color:#ef4444; font-weight:bold;">1.896 mm</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức khoảng vân</h4>
+                        <div class="formula">$$i = \frac{\lambda D}{a}, \quad x_s = k \cdot i, \quad x_t = (k + 0.5)i$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 23. DIFFRACTION -->
+        <section id="diffraction" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔬 Nhiễu Xạ Ánh Sáng: Khe Hẹp, Lỗ Tròn & Cách Mạng</h2>
+                    </div>
+                    <canvas id="diffractionCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="diffraction-dock" data-target="diffractionCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Khảo sát hình ảnh đĩa Airy (tiêu chuẩn Rayleigh) và phổ nhiễu xạ qua cách mạng!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Nhiễu Xạ Sóng Ánh Sáng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Nhiễu xạ Fraunhofer:</strong>
+                                <p>Cực tiểu nhiễu xạ qua 1 khe hẹp: $b \sin\theta = k\lambda$. Cực đại trung tâm có bề rộng gấp đôi các cực đại phụ.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Bề rộng khe & Bước sóng</h3>
+                    <div class="control-group">
+                        <label>Chế độ nhiễu xạ</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="diff-mode" value="single-slit" checked> Khe Hẹp</label>
+                            <label><input type="radio" name="diff-mode" value="circular"> Lỗ Tròn (Airy)</label>
+                            <label><input type="radio" name="diff-mode" value="grating"> Cách Mạng</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Kích thước khe/lỗ $b$: <span class="val" id="diff-slit-val">10.0 μm</span></label>
+                        <input type="range" id="diff-slit-width" min="3" max="30" value="10" step="0.5" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Bước sóng $\lambda$: <span class="val" id="diff-lambda-val">550 nm</span></label>
+                        <input type="range" id="diff-lambda" min="400" max="700" value="550" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Góc mở nhiễu xạ</h4>
+                        <div class="data-row"><span>Góc mở cực đại trung tâm $2\theta$:</span><span id="diff-angle">6.30°</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Tiêu chuẩn Rayleigh & Đĩa Airy</h4>
+                        <div class="formula">$$\theta_{Airy} \approx 1.22 \frac{\lambda}{D}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 24. POLARIZATION -->
+        <section id="polarization" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🕶️ Phân Cực Ánh Sáng (Định Luật Malus & Góc Brewster)</h2>
+                    </div>
+                    <canvas id="polarizationCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="polarization-dock" data-target="polarizationCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Xoay góc θ của kính phân tích P2: khi 2 kính vuông góc (θ = 90°), ánh sáng bị triệt tiêu hoàn toàn!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Định Luật Malus</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Công thức Malus:</strong>
+                                <p>$$I = I_0 \cos^2\theta$$</p>
+                                <p>Ánh sáng là sóng ngang điện từ với vector cường độ điện trường $\vec{E}$ dao động vuông góc với phương truyền sóng.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Góc giữa 2 kính phân cực</h3>
+                    <div class="control-group">
+                        <label>Góc lệch $\theta$: <span class="val" id="pol-angle-val">45°</span></label>
+                        <input type="range" id="pol-angle" min="0" max="90" value="45" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Cường độ sáng truyền qua</h4>
+                        <div class="data-row"><span>Tỷ lệ truyền qua $I / I_1$:</span><span id="pol-transmission" style="color:#10b981; font-weight:bold;">50.0 %</span></div>
+                        <div class="data-row"><span>Trạng thái:</span><span id="pol-status">Cường độ sáng còn lại 50.0% theo Malus</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật Malus & Góc Brewster</h4>
+                        <div class="formula">$$I = I_1 \cos^2\theta, \quad \tan i_B = \frac{n_2}{n_1}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 25. PHOTOELECTRIC -->
+        <section id="photoelectric" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>💡 Hiệu Ứng Quang Điện Ngoài (Einstein)</h2>
+                    </div>
+                    <canvas id="photoelectricCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="photoelectric-dock" data-target="photoelectricCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Chiếu photon vào catot kim loại; điều chỉnh điện áp hãm U để triệt tiêu dòng electron!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Thuyết Lượng Tử Ánh Sáng Einstein</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Phương trình Einstein:</strong>
+                                <p>$$hf = A + K_{max} = A + e U_h$$</p>
+                                <p>Ánh sáng gồm các hạt photon mang năng lượng gián đoạn $\epsilon = hf$. Quang điện chỉ xảy ra khi năng lượng photon lớn hơn hoặc bằng công thoát kim loại ($\lambda \le \lambda_0$).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Kim loại & Photon</h3>
+                    <div class="control-group">
+                        <label>Kim loại Catôt</label>
+                        <select id="pe-metal" class="control-select">
+                            <option value="Cs">Caesi (Cs - A = 2.14 eV)</option>
+                            <option value="Na" selected>Natri (Na - A = 2.36 eV)</option>
+                            <option value="Zn">Kẽm (Zn - A = 4.30 eV)</option>
+                            <option value="Cu">Đồng (Cu - A = 4.70 eV)</option>
+                            <option value="Pt">Bạch kim (Pt - A = 6.35 eV)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Bước sóng photon $\lambda$: <span class="val" id="pe-lambda-val">400 nm</span></label>
+                        <input type="range" id="pe-lambda" min="150" max="750" value="400" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Cường độ sáng: <span class="val" id="pe-intensity-val">80 %</span></label>
+                        <input type="range" id="pe-intensity" min="10" max="100" value="80" class="slider">
+                    </div>
+                    <div class="control-group">
+                        <label>Điện áp $U$ (hãm/gia tốc): <span class="val" id="pe-voltage-val">0.00 V</span></label>
+                        <input type="range" id="pe-voltage" min="-5" max="3" value="0" step="0.05" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Năng lượng & Điện áp hãm</h4>
+                        <div class="data-row"><span>Năng lượng photon $E$:</span><span id="pe-photon-e">3.10 eV</span></div>
+                        <div class="data-row"><span>Công thoát $A$:</span><span id="pe-work-func">2.36 eV</span></div>
+                        <div class="data-row"><span>Giới hạn quang điện $\lambda_0$:</span><span id="pe-lambda0">525 nm</span></div>
+                        <div class="data-row"><span>Động năng cực đại $K_{max}$:</span><span id="pe-kmax">0.74 eV</span></div>
+                        <div class="data-row"><span>Điện áp hãm $U_h$:</span><span id="pe-vstop">0.74 V</span></div>
+                        <div class="data-row"><span>Trạng thái:</span><span id="pe-status" style="color:#10b981;">Xảy ra quang điện!</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức Einstein</h4>
+                        <div class="formula">$$hf = A + \frac{1}{2} m_e v_{max}^2 = A + e U_h$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 26. BLACKBODY -->
+        <section id="blackbody" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🔴 Bức Xạ Vật Đen & Định Luật Wien, Stefan-Boltzmann</h2>
+                    </div>
+                    <canvas id="blackbodyCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="blackbody-dock" data-target="blackbodyCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Tăng nhiệt độ T để quan sát đỉnh phổ Planck dịch chuyển theo định luật Wien và màu sắc nung nóng thay đổi!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Định Luật Wien & Stefan-Boltzmann</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Công thức Planck & Định luật Wien:</strong>
+                                <p>$$\lambda_{max} T = b \approx 2.898 \times 10^{-3} \text{ m}\cdot\text{K}$$</p>
+                                <p>Tổng công suất phát xạ toàn phần theo định luật Stefan-Boltzmann: $P = \sigma T^4$. Max Planck đã đưa ra giả thuyết lượng tử năng lượng năm 1900 giải quyết cuộc khủng hoảng sụp đổ tử ngoại cổ điển.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Nhiệt độ tuyệt đối vật đen</h3>
+                    <div class="control-group">
+                        <label>Nhiệt độ $T$: <span class="val" id="bb-temp-val">5800 K</span></label>
+                        <input type="range" id="bb-temp" min="1000" max="10000" value="5800" step="100" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Đỉnh phổ & Công suất phát xạ</h4>
+                        <div class="data-row"><span>Bước sóng cực đại $\lambda_{max}$:</span><span id="bb-lambda-max" style="color:#ef4444; font-weight:bold;">500 nm</span></div>
+                        <div class="data-row"><span>Công suất phát xạ toàn phần:</span><span id="bb-total-power">64.16 MW/m²</span></div>
+                        <div class="data-row"><span>Màu sắc phát xạ:</span><span id="bb-color-desc">Trắng sáng rực rỡ (Mặt Trời)</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Định luật bức xạ Planck</h4>
+                        <div class="formula">$$u(\lambda, T) = \frac{8\pi h c}{\lambda^5} \frac{1}{e^{\frac{hc}{\lambda k_B T}} - 1}$$</div>
+                        <div class="formula">$$P = \sigma T^4$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 27. BOHR RUTHERFORD -->
+        <section id="bohr-rutherford" class="section">
+            <div class="experiment-layout">
+                <div class="canvas-container">
+                    <div class="canvas-header">
+                        <h2>🪐 Mô Hình Nguyên Tử Bohr & Tán Xạ Rutherford</h2>
+                        <div class="canvas-actions">
+                            <button class="btn-icon" id="bohr-jump-lyman" title="Nhảy về n=1 (Dãy Lyman - Tử ngoại)">Nhảy về n=1</button>
+                            <button class="btn-icon" id="bohr-jump-balmer" title="Nhảy về n=2 (Dãy Balmer - Quang học)">Nhảy về n=2</button>
+                        </div>
+                    </div>
+                    <canvas id="bohrCanvas" width="700" height="460"></canvas>
+                    <!-- PhET-style Primary Action Dock -->
+                    <div class="primary-action-dock sim-control-dock" id="bohr-rutherford-dock" data-target="bohrCanvas">
+                        <button class="dock-btn btn-reset" title="Đặt lại trạng thái ban đầu (Phím R)">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-label">Đặt lại</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-play-pause is-running" title="Bắt đầu / Tạm dừng (Phím Space)">
+                            <span class="play-icon">⏸</span>
+                            <span class="btn-label">Tạm dừng</span>
+                        </button>
+                        
+                        <button class="dock-btn btn-step" title="Bước tiếp 1 khung hình (Phím .)" disabled>
+                            <span class="btn-icon">⏩</span>
+                            <span class="btn-label">Bước tiếp</span>
+                        </button>
+
+                        <div class="dock-speed-selector">
+                            <span class="speed-label">⏱️ Tốc độ:</span>
+                            <button class="speed-opt" data-speed="0.5">0.5x</button>
+                            <button class="speed-opt active" data-speed="1.0">1.0x</button>
+                            <button class="speed-opt" data-speed="2.0">2.0x</button>
+                        </div>
+
+                        <div class="dock-status-badge">🟢 Đang chạy</div>
+                    </div>
+                    <div class="canvas-footer">
+                        <span class="tip">💡 Kích hoạt electron nhảy từ mức năng lượng cao về mức thấp để phát ra photon năng lượng gián đoạn!</span>
+                    </div>
+
+                    <div class="theory-card">
+                        <div class="theory-header">
+                            <span class="theory-badge">GIẢI NGHĨA KHOA HỌC</span>
+                            <h4>💡 Tiên Đề Bohr Về Trạng Thái Dừng</h4>
+                        </div>
+                        <div class="theory-body">
+                            <div class="theory-block">
+                                <strong>🎯 Tiên đề Bohr:</strong>
+                                <p>Electron chỉ chuyển động trên các quỹ đạo dừng xác định với momen động lượng $L = n\hbar$. Khi electron chuyển từ mức năng lượng cao $E_n$ xuống mức thấp $E_m$, nó phát xạ một photon có năng lượng $h\nu = E_n - E_m$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <h3>⚙️ Chọn mức lượng tử & Chế độ</h3>
+                    <div class="control-group">
+                        <label>Chế độ khảo sát</label>
+                        <div class="preset-buttons">
+                            <label><input type="radio" name="bohr-mode" value="bohr" checked> Nguyên Tử Bohr</label>
+                            <label><input type="radio" name="bohr-mode" value="rutherford"> Tán Xạ Rutherford</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Mức lượng tử $n$: <span class="val" id="bohr-level-val">3</span></label>
+                        <input type="range" id="bohr-level-n" min="1" max="5" value="3" class="slider">
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📊 Bán kính & Mức năng lượng</h4>
+                        <div class="data-row"><span>Bán kính quỹ đạo $r_n$:</span><span id="bohr-radius">4.77 Å</span></div>
+                        <div class="data-row"><span>Mức năng lượng $E_n$:</span><span id="bohr-energy">-1.51 eV</span></div>
+                        <div class="data-row"><span>Photon vừa phát xạ:</span><span id="bohr-emitted-photon" style="color:#f59e0b; font-weight:bold;">Chưa phát xạ</span></div>
+                    </div>
+
+                    <div class="formula-card">
+                        <h4>📝 Công thức Rydberg & Mức năng lượng</h4>
+                        <div class="formula">$$r_n = n^2 r_0, \quad E_n = -\frac{13.6}{n^2} \text{ eV}$$</div>
+                        <div class="formula">$$\frac{1}{\lambda} = R_H \left(\frac{1}{m^2} - \frac{1}{n^2}\right)$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Simulation Scripts -->
+    <!-- All Simulations & Core Logic Bundled in app.js (Zero 404 guarantee) -->
+    <script src="app.js?v=20261031_bundle"></script>
+</body>
+</html>

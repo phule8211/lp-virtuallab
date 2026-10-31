@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="gradNucleus" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="gradOrbit" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer glow circle -->
+  <circle cx="50" cy="50" r="48" fill="#f0f9ff" stroke="#bae6fd" stroke-width="2"/>
+  
+  <!-- Orbit 1 -->
+  <ellipse cx="50" cy="50" rx="36" ry="14" fill="none" stroke="#0284c7" stroke-width="2.5" transform="rotate(30 50 50)"/>
+  <circle cx="78" cy="66" r="3.5" fill="#f59e0b"/>
+  
+  <!-- Orbit 2 -->
+  <ellipse cx="50" cy="50" rx="36" ry="14" fill="none" stroke="#0284c7" stroke-width="2.5" transform="rotate(-30 50 50)"/>
+  <circle cx="22" cy="66" r="3.5" fill="#f59e0b"/>
+  
+  <!-- Orbit 3 -->
+  <ellipse cx="50" cy="50" rx="36" ry="14" fill="none" stroke="#0284c7" stroke-width="2.5" transform="rotate(90 50 50)"/>
+  <circle cx="50" cy="14" r="3.5" fill="#f59e0b"/>
+  
+  <!-- Central Nucleus -->
+  <circle cx="50" cy="50" r="9" fill="url(#gradNucleus)"/>
+  <circle cx="47" cy="47" r="3" fill="#ffffff" opacity="0.6"/>
+</svg>
+

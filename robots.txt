@@ -1,0 +1,6 @@
+# Robots.txt for PhysicsLab UET
+User-agent: *
+Allow: /
+
+Sitemap: sitemap.xml
+

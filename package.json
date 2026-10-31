@@ -1,0 +1,30 @@
+{
+  "name": "lp-virtuallab",
+  "version": "2.0.0",
+  "description": "LP.VirtualLab - Phòng Thí Nghiệm Vật Lý Ảo Tương Tác (Vật lý Đại cương 1 & 2)",
+  "main": "app.js",
+  "scripts": {
+    "start": "npx serve -l 8080 .",
+    "dev": "python -m http.server 8080"
+  },
+  "keywords": [
+    "physics",
+    "simulation",
+    "lp-virtuallab",
+    "phet",
+    "physlets",
+    "geogebra",
+    "matlab",
+    "labster",
+    "uet",
+    "vnu",
+    "mechanics",
+    "thermodynamics",
+    "waves",
+    "electromagnetism",
+    "optics",
+    "quantum-physics"
+  ],
+  "author": "Lê Ngọc Phú (SĐT: 0853257289) <25020994@vnu.edu.vn>",
+  "license": "MIT"
+}

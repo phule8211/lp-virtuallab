@@ -1,0 +1,17 @@
+{
+  "name": "LP.VirtualLab - Phòng Thí Nghiệm Vật Lý Ảo",
+  "short_name": "LP.VirtualLab",
+  "description": "LP.VirtualLab - Phòng thí nghiệm vật lý ảo tương tác trực quan 27 bài thí nghiệm Vật lý Đại cương 1 & 2. Tác giả: Lê Ngọc Phú - SĐT: 0853257289",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0284c7",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
